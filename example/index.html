@@ -3,14 +3,26 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title></title>
-    <link  rel="stylesheet" type="text/css" href="../jquery-ui.min.css">
+    <link  rel="stylesheet" type="text/css" href="../jquery-ui.css">
     <script src="../jquery-2.2.0.min.js"></script>
     <script	src="../jquery-ui.min.js"></script>
     <script src="../jquery.svg.js"></script>
-    <script src="../jquery.clocktimeintervalpicker.js"></script>
+    <script src="../jquery.clockTimeIntervalPicker.js"></script>
 	<script>
 		$( document ).ready( function () {
-			$( "#time-picker" ).timeIntervalPicker();
+			var picker = $( "#time-picker" ).clockTimeIntervalPicker({showFaceCircle : false});
+            picker.on( "selectionStarted", function( event, timeObj ) {
+                console.log("selectionStarted");
+                console.log(timeObj);
+            });
+            picker.on( "selectionEnded", function( event, interval ) {
+                console.log("selectionEnded");
+                console.log(interval);
+            });
+            picker.on( "selectionChanged", function( event, data ) {
+                console.log("selectionChanged");
+                console.log(data.intervals);
+            });
 		} );
 	</script>
 </head>
