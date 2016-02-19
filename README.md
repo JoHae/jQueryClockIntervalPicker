@@ -1,6 +1,6 @@
 # jQueryClockTimeIntervalPicker
 
-## In development !
+## Coming Soon !
 
 ##What ?
 A clock with the ability to choose time intervals interactively.
