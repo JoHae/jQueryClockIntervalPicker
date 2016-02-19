@@ -3,7 +3,7 @@
 ## Coming Soon !
 
 ##What ?
-A clock with the ability to choose time intervals interactively.
+A costumizable clock with the ability to choose time intervals interactively.
 
 ##Example
 
