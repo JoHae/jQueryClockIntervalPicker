@@ -10,10 +10,22 @@ $(function () {
             width: 500,
             height: 500,
             radius: 200,
-            strokeColor: 'black',
-            strokeWidth: 5,
             multiSelection: true,
-            showFaceCircle : true
+            showFaceCircle : false,
+            faceCircleOptions : {
+                fill: '#f1f1f1',
+                fillOpacity : 1.0,
+                stroke: 'black',
+                strokeOpacity : 0.0,
+                strokeWidth: 0
+            },
+            faceOverlayOptions : {
+                fill: 'blue',
+                fillOpacity : 0.4,
+                stroke: 'blue',
+                strokeOpacity : 0.4,
+                strokeWidth: 2
+            }
         },
 
         _create: function () {
@@ -33,14 +45,12 @@ $(function () {
             var arcPath = null;
             var interactionGroups = [];
 
-            var dist = _this.options.radius + _this.options.strokeWidth;
-            var interactionGroupOptions = {
-                transform: 'translate(' + dist + ',' + dist + ')',
-                stroke: 'blue',
-                strokeOpacity: 0.4,
-                fill: 'blue',
-                fillOpacity: "0.4"
-            };
+            var dist = _this.options.radius
+            if(_this.options.showFaceCircle) {
+                dist += _this.options.faceCircleOptions.strokeWidth;
+            }
+            var interactionGroupOptions = this.options.faceOverlayOptions;
+            interactionGroupOptions.transform = 'translate(' + dist + ',' + dist + ')';
 
             this.svg = null;
             this.element.css('width', this.options.width);
@@ -67,7 +77,7 @@ $(function () {
             /**
              * Init elements
              */
-            this._createElements();
+            this._createElements(dist);
 
             /**
              * Mouse Events
@@ -78,8 +88,6 @@ $(function () {
                     clearSelection();
                     return;
                 }
-
-                _this.element.css('cursor', 'pointer');
 
                 // Check ctrl hold for append mode
                 appendMode = event.ctrlKey && _this.options.multiSelection;
@@ -103,8 +111,6 @@ $(function () {
                 if (event.which == 3) {
                     return;
                 }
-
-                _this.element.css('cursor', 'default');
 
                 // End arc
                 actualEndTime = getTimeFromAbsolutePosition(event.pageX, event.pageY);
@@ -311,21 +317,24 @@ $(function () {
             }
         },
 
-        _createElements: function () {
+        _createElements: function (dist) {
             var _this = this;
 
             // Time tooltip
-            this.element.tooltipContainer = $('<div></div>').attr('id', 'jh-text-container').css('position', 'absolute').css('background-color', 'white').hide().appendTo(this.element);
+            this.element.tooltipContainer = $('<div></div>').attr('id', 'jh-tooltip-container').hide().appendTo(this.element);
 
             // AM/PM Buttons
-            var buttonContainer = $('<div></div>').attr('id', 'jh-button-container').css('text-align', 'center').css('margin', 5).appendTo(this.element);
+            var buttonContainer = $('<div></div>').attr('id', 'jh-button-container').appendTo(this.element);
 
             $(' <input type="checkbox" id="jh-am-button"><label for="jh-am-button">AM</label>').appendTo(buttonContainer);
             $(' <input type="checkbox" id="jh-pm-button"><label for="jh-pm-button">PM</label>').appendTo(buttonContainer);
             buttonContainer.buttonset();
 
-            this.svgWidthHeight = 2 * this.options.radius + 2 * this.options.strokeWidth;
-            this.element.svgContainer = $('<div></div>').attr('id', 'jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").css('margin', 'auto').appendTo(this.element);
+            this.svgWidthHeight = 2 * this.options.radius;
+            if(this.options.showFaceCircle) {
+                this.svgWidthHeight += 2 * this.options.faceCircleOptions.strokeWidth
+            }
+            this.element.svgContainer = $('<div></div>').attr('id', 'jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
             this.element.svgContainer.svg({
                 onLoad: drawClock
             });
@@ -333,21 +342,14 @@ $(function () {
             function drawClock(svg) {
                 _this.svg = svg;
                 var radius = _this.options.radius;
-                var centerX = _this.options.radius + _this.options.strokeWidth;
-                var centerY = _this.options.radius + _this.options.strokeWidth;
+                var centerXY = _this.svgWidthHeight / 2;
 
                 if(_this.options.showFaceCircle) {
-                    svg.circle(centerX, centerY, radius, {
-                        fill: '#f1f1f1',
-                        fillOpacity : '1.0',
-                        stroke: _this.options.strokeColor,
-                        strokeWidth: _this.options.strokeWidth
-                    });
+                    svg.circle(centerXY, centerXY, radius, _this.options.faceCircleOptions);
                 }
 
                 // Draw the face
                 // 12 to 12
-                var dist = _this.options.radius + _this.options.strokeWidth;
                 var svgClockFaceGroup = svg.group({stroke: 'black', transform: 'translate(' + dist + ',' + dist + ')'});
 
                 // 12-3-6-9

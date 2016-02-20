@@ -8,6 +8,22 @@
     <script	src="../jquery-ui.min.js"></script>
     <script src="../jquery.svg.js"></script>
     <script src="../jquery.clockTimeIntervalPicker.js"></script>
+    <style>
+        #jh-svg-container {
+            margin: auto;
+            cursor: crosshair;
+        }
+        #jh-tooltip-container {
+            position: absolute;
+            background-color: white;
+        }
+        #jh-button-container {
+            text-align: center;
+            margin: 5px;
+        }
+
+    </style>
+
 	<script>
 		$( document ).ready( function () {
 			var picker = $( "#time-picker" ).clockTimeIntervalPicker({showFaceCircle : false});
