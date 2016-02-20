@@ -142,8 +142,7 @@ $(function () {
                 var angle = _this.getAngleFromRelativePosition(pRel.x, pRel.y);
                 var time = getTimeFromAngle(angle);
 
-                _this.element.tooltipContainer.css('left', lastX + 15).css('top', lastY).text(time);
-
+                _this.element.tooltipContainer.css('left', lastX + 15).css('top', lastY).text(timeObjectToString(time));
 
                 if (mousedown) {
                     // Continue arc
@@ -160,6 +159,10 @@ $(function () {
                     clearTextSelection();
                 }
             });
+
+            function timeObjectToString(timeObj) {
+                return ( timeObj.hours < 10 ? "0" + timeObj.hours : timeObj.hours ) + ":" + (timeObj.minutes < 10 ? "0" + timeObj.minutes : timeObj.minutes);
+            }
 
             function clearSelection() {
                 actualStartTime = null;
@@ -282,14 +285,12 @@ $(function () {
             }
 
             /**
-             *
              * @param angleDeg
-             * @returns {string}
+             * @returns {{hours: Number, minutes: number}}
              */
             function getTimeFromAngle(angleDeg) {
                 // Angle to time
                 var angle = angleDeg + 180;
-                var time = "";
                 var decimalValue = 3.0 - ( 1.0 / 30.0 ) * ( angle % 360 ) * -1;
                 if (decimalValue < 0)
                     decimalValue += 12.0;
@@ -298,10 +299,8 @@ $(function () {
                 var hours = parseInt(decimalValue);
                 if (hours == 0)
                     hours = 12;
-                time += ( hours < 10 ? "0" + hours : hours ) + ":";
                 var minutes = parseInt(decimalValue * 60) % 60;
-                time += minutes < 10 ? "0" + minutes : minutes;
-                return time;
+                return {hours: hours, minutes : minutes};
             }
 
             function clearTextSelection() {
