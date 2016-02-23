@@ -18,15 +18,18 @@
             background-color: white;
         }
         #jh-button-container {
-            text-align: center;
             margin: 5px;
+            height: 32px;
+        }
+        .hour-label {
+            font-size: 24px;
         }
 
     </style>
 
 	<script>
 		$( document ).ready( function () {
-			var picker = $( "#time-picker" ).clockTimeIntervalPicker({showFaceCircle : false});
+			var picker = $( "#time-picker" ).clockTimeIntervalPicker({showFaceCircle : false, showToggleLayout : true});
             picker.on( "selectionStarted", function( event, timeObj ) {
                 console.log("selectionStarted");
                 console.log(timeObj);
@@ -39,10 +42,13 @@
                 console.log("selectionChanged");
                 console.log(data.intervals);
             });
+
+            var picker2 = $( "#time-picker2" ).clockTimeIntervalPicker({showFaceCircle : true, enableAmPmButtons:false, showToggleLayout : false});
 		} );
 	</script>
 </head>
 <body>
 <div id="time-picker"></div>
+<div id="time-picker2"></div>
 </body>
 </html>
