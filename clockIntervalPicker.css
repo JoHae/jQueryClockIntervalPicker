@@ -1,0 +1,15 @@
+#jh-svg-container {
+    margin: auto;
+    cursor: crosshair;
+}
+#jh-tooltip-container {
+    position: absolute;
+    background-color: white;
+}
+#jh-button-container {
+    margin: 5px;
+    height: 32px;
+}
+.hour-label {
+    font-size: 24px;
+}

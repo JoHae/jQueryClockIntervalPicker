@@ -6,7 +6,7 @@
  */
 $(function () {
     // Static variables shared across all instances
-    var TEXT_OFFSET = 10;
+    var TEXT_OFFSET = 24;
     var AM_LABEL = 'AM';
     var PM_LABEL = 'PM';
     var AM_PM_LABEL = 'AM/PM';
@@ -15,7 +15,7 @@ $(function () {
         options: {
             width: 500,
             height: 500,
-            radius: 200,
+            circleRadius: 200,
             multiSelection: true,
             showFaceCircle: false,
             enableAmPmButtons: true,
@@ -41,7 +41,7 @@ $(function () {
                 strokeOpacity: 0.4,
                 strokeWidth: 1
             },
-            showToggleLayout: true
+            showToggleLayoutButton: false
         },
 
         _create: function () {
@@ -50,9 +50,9 @@ $(function () {
             var lastY = 0;
             var lastX = 0;
             var mouseDown = false;
-            var dist = this.options.radius + TEXT_OFFSET;
+            var middle = this.options.circleRadius + TEXT_OFFSET;
             if (this.options.showFaceCircle) {
-                dist += this.options.faceCircleOptions.strokeWidth;
+                middle += this.options.faceCircleOptions.strokeWidth;
             }
 
             // Interaction
@@ -72,12 +72,12 @@ $(function () {
             this.element.css('width', this.options.width);
             this.element.css('height', this.options.height);
             this.interactionGroupOptions = this.options.faceOverlayOptions;
-            this.interactionGroupOptions.transform = 'translate(' + dist + ',' + dist + ')';
+            this.interactionGroupOptions.transform = 'translate(' + middle + ',' + middle + ')';
 
             /**
              * Init elements
              */
-            this._createElements(dist);
+            this._createElements(middle);
 
             /**
              * Mouse Events
@@ -104,9 +104,7 @@ $(function () {
 
                 mouseDown = true;
                 _this.element.trigger("selectionStarted", {
-                    startTime: _this.actualStartTime,
-                    AM: _this.amEnabled,
-                    PM: _this.pmEnabled
+                    intervals : _this._getIntervalsFromTimeObj(_this.actualStartTime, null, _this.amEnabled, _this.pmEnabled)
                 });
             });
 
@@ -120,16 +118,14 @@ $(function () {
                 _this.intervalCount++;
                 mouseDown = false;
 
-                var intervalObject = {
-                    startTime: _this.actualStartTime,
-                    endTime: actualEndTime,
-                    AM: _this.amEnabled,
-                    PM: _this.pmEnabled
-                };
-                _this.selectedIntervals.push(intervalObject);
+                var intervals = _this._getIntervalsFromTimeObj(_this.actualStartTime, actualEndTime, _this.amEnabled, _this.pmEnabled);
+                _this.selectedIntervals = _this.selectedIntervals.concat(intervals);
+
                 _this.actualStartTime = null;
 
-                _this.element.trigger("selectionEnded", intervalObject);
+                _this.element.trigger("selectionEnded", {
+                    intervals : intervals
+                });
                 _this.element.trigger("selectionChanged", {intervals: _this.selectedIntervals});
             });
 
@@ -156,7 +152,7 @@ $(function () {
 
                 if (mouseDown) {
                     // Continue arc
-                    var radius = _this.options.radius;
+                    var radius = _this.options.circleRadius;
 
                     // In order to have 0 - 360 degree
                     var angleOffset = angle + 180;
@@ -201,8 +197,8 @@ $(function () {
 
             // See http://math.stackexchange.com/questions/700237/coordinates-of-sector-of-circle
             return {
-                x: this.options.radius * Math.cos(radianAngle),
-                y: this.options.radius * Math.sin(radianAngle) * -1,
+                x: this.options.circleRadius * Math.cos(radianAngle),
+                y: this.options.circleRadius * Math.sin(radianAngle) * -1,
                 angle: angle
             };
         },
@@ -256,6 +252,8 @@ $(function () {
         _getTimeFromAngle: function (angleDeg) {
             var angle = angleDeg + 180;
             var decimalValue = 3.0 - ( 1.0 / 30.0 ) * ( angle % 360 ) * -1;
+
+            // Normalize from 12 - 11
             if (decimalValue < 0)
                 decimalValue += 12.0;
             if (decimalValue > 12)
@@ -266,6 +264,58 @@ $(function () {
             var minutes = parseInt(decimalValue * 60) % 60;
 
             return {hours: hours, minutes: minutes};
+        },
+
+        _getIntervalsFromTimeObj : function(startTime, endTime, amEnabled, pmEnabled) {
+            var intervals = [];
+
+            if (amEnabled && pmEnabled) {
+                // Copy objects
+                var firstStart = $.extend({},startTime);
+                var firstEnd = $.extend({},endTime);
+                var secondStart = $.extend({},startTime);
+                var secondEnd = $.extend({},endTime);
+
+                /**
+                 * First Interval (startTime is AM)
+                 */
+                // If startTime is 12 we have to subtract 12 to get 0
+                if(startTime.hours == 12) {
+                    firstStart.hours -= 12;
+                }
+
+                // If endTime is PM we have to add 12
+                if(endTime != null) {
+                    if(endTime.hours <  startTime.hours && startTime.hours < 12) {
+                        firstEnd.hours += 12;
+                    }
+                }
+                intervals.push({startTime : firstStart, endTime: firstEnd});
+
+                /**
+                 * First Interval (startTime is PM)
+                 */
+                if(startTime.hours < 12) {
+                    secondStart.hours += 12
+                }
+
+                if(endTime != null && endTime.hours < 12 && endTime.hours > startTime.hours) {
+                    secondEnd.hours += 12
+                }
+
+                // If endTime is AM we have to subtract 12
+                if(endTime != null) {
+                    if (endTime.hours < startTime.hours) {
+                        secondEnd.hours -= 12;
+                    }
+                }
+                intervals.push({startTime : secondStart, endTime: secondEnd});
+
+            } else if (pmEnabled) {
+
+            }
+
+            return intervals;
         },
 
         _drawSvgArc: function (arcEndPoint, angleOffset) {
@@ -327,7 +377,7 @@ $(function () {
 
                 this.arcPath.move(0, 0)
                     .line([[0, 0], [this.actualArcStartPoint.x, this.actualArcStartPoint.y]])
-                    .arc(this.options.radius, this.options.radius, 1, clockwise, 1, arcEndPoint.x, arcEndPoint.y)
+                    .arc(this.options.circleRadius, this.options.circleRadius, 1, clockwise, 1, arcEndPoint.x, arcEndPoint.y)
                     .line([[arcEndPoint.x, arcEndPoint.y], [0, 0]])
                     .close();
             }
@@ -370,10 +420,10 @@ $(function () {
             this.element.tooltipContainer = $('<div></div>').attr('id', 'jh-tooltip-container').hide().appendTo(this.element);
             var amPmButtonContainer;
 
-            if (this.options.showToggleLayout || this.options.enableAmPmButtons) {
+            if (this.options.showToggleLayoutButton || this.options.enableAmPmButtons) {
                 var buttonContainer = $('<div></div>').attr('id', 'jh-button-container').appendTo(this.element);
 
-                if (this.options.showToggleLayout) {
+                if (this.options.showToggleLayoutButton) {
                     var toggleButtonContainer = $('<div></div>').attr('id', 'jh-toggle-button-container').css('float', 'left').appendTo(buttonContainer).css('float', 'right');
                     $(' <input type="checkbox" id="clockLayout"><label for="clockLayout">24h</label> ').appendTo(toggleButtonContainer);
                     $('#clockLayout').button().on('change', function () {
@@ -415,7 +465,7 @@ $(function () {
             }
 
 
-            this.svgWidthHeight = 2 * (this.options.radius + TEXT_OFFSET);
+            this.svgWidthHeight = 2 * (this.options.circleRadius + TEXT_OFFSET);
             if (this.options.showFaceCircle) {
                 this.svgWidthHeight += 2 * this.options.faceCircleOptions.strokeWidth
             }
@@ -428,7 +478,7 @@ $(function () {
                 _this.svg = svg;
                 $(svg.root()).attr('width', '100%').attr('height', '100%');
                 //$(svg.root()).removeAttr('width').removeAttr('height').attr('viewBox', '0 0 400 400');
-                var radius = _this.options.radius;
+                var radius = _this.options.circleRadius;
                 var centerXY = _this.svgWidthHeight / 2;
 
                 if (_this.options.showFaceCircle) {
@@ -440,26 +490,26 @@ $(function () {
                 var svgClockFaceGroup = svg.group({stroke: 'black', transform: 'translate(' + dist + ',' + dist + ')'});
 
                 // Small ticks
-                var lengthShort = _this.options.radius - _this.options.faceTicksTinyLength;
+                var lengthShort = _this.options.circleRadius - _this.options.faceTicksTinyLength;
                 for (var i = 0; i < 360; i += 6) {
                     var tOptions = _this.options.faceTicksTinyOptions;
                     tOptions.transform = 'rotate(' + i + ')';
-                    svg.line(svgClockFaceGroup, 0, _this.options.radius, 0, lengthShort, tOptions);
+                    svg.line(svgClockFaceGroup, 0, _this.options.circleRadius, 0, lengthShort, tOptions);
                 }
 
                 // Large ticks (12-3-6-9)
-                var lengthLong = _this.options.radius - _this.options.faceTicksLargeLength;
+                var lengthLong = _this.options.circleRadius - _this.options.faceTicksLargeLength;
                 for (i = 0; i < 360; i += 30) {
                     tOptions = _this.options.faceTicksLargeOptions;
                     tOptions.transform = 'rotate(' + i + ')';
-                    svg.line(svgClockFaceGroup, 0, _this.options.radius, 0, lengthLong, tOptions);
+                    svg.line(svgClockFaceGroup, 0, _this.options.circleRadius, 0, lengthLong, tOptions);
                 }
 
                 // Text
-                svg.text(svgClockFaceGroup, 0, _this.options.radius + TEXT_OFFSET, "6");
-                svg.text(svgClockFaceGroup, -_this.options.radius - TEXT_OFFSET, 0, "9");
-                svg.text(svgClockFaceGroup, 0, -_this.options.radius - TEXT_OFFSET, "12");
-                svg.text(svgClockFaceGroup, _this.options.radius + TEXT_OFFSET, 0, "3");
+                svg.text(svgClockFaceGroup, 0, _this.options.circleRadius + TEXT_OFFSET, "6");
+                svg.text(svgClockFaceGroup, -_this.options.circleRadius - TEXT_OFFSET, 0, "9");
+                svg.text(svgClockFaceGroup, 0, -_this.options.circleRadius - TEXT_OFFSET, "12");
+                svg.text(svgClockFaceGroup, _this.options.circleRadius + TEXT_OFFSET, 0, "3");
                 $('text', svg.root()).attr('text-anchor', 'middle').addClass('hour-label');
 
 
