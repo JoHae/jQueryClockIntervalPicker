@@ -8,6 +8,9 @@ A costumizable clock with the ability to choose time intervals interactively.
 ##Usage
 
 ##Requirements
+- jQuery     Version 2.2.0  : <https://jquery.com>
+- jQuery UI  Version 1.11.4 : <http://jqueryui.com>
+- jQuery SVG Version 1.5.0  : <http://keith-wood.name/svg.html>
 
 ##Found a bug ? 
 
