@@ -9,6 +9,25 @@
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
     <title>jQueryClockIntervalPicker</title>
+
+      <script>
+          $( document ).ready( function () {
+              var picker = $( "#time-picker" ).clockTimeIntervalPicker();
+              picker.on( "selectionStarted", function( event, timeObj ) {
+                  console.log("selectionStarted");
+                  console.log(timeObj);
+              });
+              picker.on( "selectionEnded", function( event, interval ) {
+                  console.log("selectionEnded");
+                  console.log(interval);
+              });
+              picker.on( "selectionChanged", function( event, data ) {
+                  console.log("selectionChanged");
+                  console.log(data.intervals);
+              });
+          } );
+      </script>
+
   </head>
 
   <body>
