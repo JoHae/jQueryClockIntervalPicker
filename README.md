@@ -25,3 +25,4 @@ Submit an issue above or here:
 ##Work in Progress
 - [ ] 0 - 23 h Clock Layout
 - [ ] Costumizable ticks in minutes
+- [ ] Text labels for hours
