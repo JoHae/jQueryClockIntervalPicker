@@ -72,6 +72,7 @@ $(function () {
 
             this.element.css('width', this.options.width);
             this.element.css('height', this.options.height);
+            this.element.css('position', 'relative');
             this.interactionGroupOptions = this.options.faceOverlayOptions;
             this.interactionGroupOptions.transform = 'translate(' + middle + ',' + middle + ')';
 
@@ -149,7 +150,9 @@ $(function () {
                 var angle = _this._getAngleFromRelativePosition(pRel.x, pRel.y);
                 var time = _this._getTimeFromAngle(angle);
 
-                _this.element.tooltipContainer.css('left', lastX + 15).css('top', lastY).text(_this._getTooltipText(time));
+                var off = _this.element.offset();
+
+                _this.element.tooltipContainer.css('left', lastX - off.left + 15).css('top', lastY - off.top).text(_this._getTooltipText(time));
 
                 if (mouseDown) {
                     // Continue arc
