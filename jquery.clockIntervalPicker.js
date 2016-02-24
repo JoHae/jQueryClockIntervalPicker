@@ -1,6 +1,11 @@
 /**
- * @author Johannes Haeussler - Johannes.3.Haeussler(at)uni-konstanz.de
- * @version 1.0
+ * jquery.clockIntervalPicker.js - A jQuery plugin for interactive time-interval selection based on a clock metaphor.
+ *
+ * @version v1.0.0
+ * @link    GitHub           - https://github.com/JoHae/jQueryClockIntervalPicker
+ * @license MIT License      - https://opensource.org/licenses/MIT
+ * @author  Johannes Häußler - <johannes.haeussler.87@gmail.com>
+ *
  */
 $(function () {
     // Static variables shared across all instances
