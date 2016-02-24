@@ -4,7 +4,7 @@
 A costumizable clock with the ability to choose time intervals interactively.
 
 ##Example
-Visit the project page: 
+visit the [Project Page](http://johae.github.io/jQueryClockIntervalPicker) or see example folder of the repository .
 
 ##Usage - Interaction
 | Commands | `no key` | `Ctrl-hold` |
@@ -49,3 +49,6 @@ Submit an issue above or here:
 - [ ] 0 - 23 h Clock Layout
 - [ ] Costumizable ticks in minutes
 - [ ] Text labels for hours
+
+##License
+MIT License (MIT)
