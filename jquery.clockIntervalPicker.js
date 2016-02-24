@@ -83,10 +83,55 @@ $(function () {
              * Mouse Events
              */
             this.element.svgContainer.mousedown(function (event) {
-                // Right Click to reset
+                _this._clearTextSelection();
+
+                // Right Click to reset / select all if no interval exists
                 if (event.which == 3) {
-                    _this._clearSelection();
+                    if(_this.intervalCount > 0) {
+                        _this._clearSelection();
+                        _this.element.trigger("selectionChanged", {
+                            intervals: {}
+                        });
+                    } else {
+                        if(_this.amEnabled) {
+                            _this.selectedIntervals.push({
+                                startTime : {
+                                    hours : 0,
+                                    minutes : 0
+                                },
+                                endTime : {
+                                    hours : 11,
+                                    minutes : 59
+                                }
+                            });
+                        }
+                        if(_this.pmEnabled) {
+                            _this.selectedIntervals.push({
+                                startTime : {
+                                    hours : 12,
+                                    minutes : 0
+                                },
+                                endTime : {
+                                    hours : 23,
+                                    minutes : 59
+                                }
+                            });
+                        }
+
+                        // Draw a Circle
+                        _this.interactionGroups.push(_this.svg.group(_this.interactionGroupOptions));
+                        _this.svg.circle(_this.interactionGroups[_this.intervalCount], 0, 0, _this.options.circleRadius);
+                        _this.intervalCount++;
+                        _this.element.trigger("selectionChanged", {
+                            intervals: _this.selectedIntervals
+                        });
+                    }
+
                     return;
+                }
+
+                if (mouseDown) {
+                    // Mouse was not released inside clock
                 }
 
                 // Check ctrl hold for append mode
@@ -111,6 +156,12 @@ $(function () {
             this.element.svgContainer.mouseup(function (event) {
                 if (event.which == 3) {
                     return;
+                }
+
+                _this._clearTextSelection();
+
+                if (!mouseDown) {
+                    // Mouse was not pressed down inside clock
                 }
 
                 // End arc
@@ -144,6 +195,8 @@ $(function () {
                 lastX = event.pageX;
                 lastY = event.pageY;
 
+                _this._clearTextSelection();
+
                 var pRel = _this._getRelativePosition(lastX, lastY);
                 var angle = _this._getAngleFromRelativePosition(pRel.x, pRel.y);
                 var time = _this._getTimeFromAngle(angle);
@@ -154,25 +207,12 @@ $(function () {
 
                 if (mouseDown) {
                     // Continue arc
-                    var radius = _this.options.circleRadius;
-
                     // In order to have 0 - 360 degree
                     var angleOffset = angle + 180;
-                    var arcEndPoint = _this._polarToCartesian(0, 0, radius, angleOffset);
+                    var arcEndPoint = _this._polarToCartesian(0, 0, _this.options.circleRadius, angleOffset);
 
                     // Draw the Arc
                     _this._drawSvgArc(arcEndPoint, angleOffset);
-
-                    // Clear Text Selection since sometimes it selects labels (e.g. the timelabel)
-                    if (window.getSelection) {
-                        if (window.getSelection().empty) {  // Chrome
-                            window.getSelection().empty();
-                        } else if (window.getSelection().removeAllRanges) {  // Firefox
-                            window.getSelection().removeAllRanges();
-                        }
-                    } else if (document.selection) {  // IE?
-                        document.selection.empty();
-                    }
                 }
             });
         },
@@ -184,6 +224,19 @@ $(function () {
                 x: x - offset.left,
                 y: y - offset.top
             };
+        },
+
+        _clearTextSelection : function () {
+            // Clear Text Selection since sometimes it selects labels (e.g. the timelabel)
+            if (window.getSelection) {
+                if (window.getSelection().empty) {  // Chrome
+                    window.getSelection().empty();
+                } else if (window.getSelection().removeAllRanges) {  // Firefox
+                    window.getSelection().removeAllRanges();
+                }
+            } else if (document.selection) {  // IE?
+                document.selection.empty();
+            }
         },
 
         _getTimeFromAbsolutePosition: function (x, y) {
