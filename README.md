@@ -51,4 +51,4 @@ Submit an issue above or here:
 - [ ] Text labels for hours
 
 ##Licence
-MIT
+MIT License (MIT)
