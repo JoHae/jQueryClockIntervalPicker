@@ -4,7 +4,7 @@
 A costumizable clock with the ability to choose time intervals interactively.
 
 ##Example
-Visit the project page: 
+see example folder
 
 ##Usage - Interaction
 | Commands | `no key` | `Ctrl-hold` |
