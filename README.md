@@ -50,5 +50,5 @@ Submit an issue above or here:
 - [ ] Costumizable ticks in minutes
 - [ ] Text labels for hours
 
-##Licence
+##License
 MIT License (MIT)
