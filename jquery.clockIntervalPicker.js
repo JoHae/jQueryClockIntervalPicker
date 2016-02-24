@@ -1,6 +1,4 @@
 /**
- * main.js  - 17.02.2016
- *
  * @author Johannes Haeussler - Johannes.3.Haeussler(at)uni-konstanz.de
  * @version 1.0
  */
