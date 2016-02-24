@@ -130,9 +130,9 @@ $(function () {
                     return;
                 }
 
-                if (mouseDown) {
+                //if (mouseDown) {
                     // Mouse was not released inside clock
-                }
+                //}
 
                 // Check ctrl hold for append mode
                 _this.ctrlHold = event.ctrlKey && _this.options.multiSelection;
@@ -160,9 +160,9 @@ $(function () {
 
                 _this._clearTextSelection();
 
-                if (!mouseDown) {
+                //if (!mouseDown) {
                     // Mouse was not pressed down inside clock
-                }
+                //}
 
                 // End arc
                 var actualEndTime = _this._getTimeFromAbsolutePosition(event.pageX, event.pageY);
