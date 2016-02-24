@@ -22,7 +22,6 @@ Submit an issue above or here:
 
 <https://github.com/JoHae/jQueryClockIntervalPicker/issues>
 
-##Future Work
-
-- 0 - 23 h Clock Layout
-- Costumizable ticks in minutes
+##Work in Progress
+- [ ] 0 - 23 h Clock Layout
+- [ ] Costumizable ticks in minutes
