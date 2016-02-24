@@ -4,8 +4,12 @@
 A costumizable clock with the ability to choose time intervals interactively.
 
 ##Example
+Visit the project page: 
 
-##Usage
+##Usage - Interaction
+
+
+##Usage - Events
 
 ##Requirements
 - jQuery     Version 2.2.0  : <https://jquery.com>
