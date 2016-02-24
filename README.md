@@ -32,6 +32,25 @@ $( "#time-picker" ).clockTimeIntervalPicker()
     });
 ```
 
+##Options
+Just pass an options object on initialization:
+```javascript
+$( "#time-picker" ).clockTimeIntervalPicker({circleRadius : 100});
+```
+
+### List of available Options
+| Option | Description | Default |
+| --- | --- | --- |
+| `circleRadius` |  | |
+| `multiSelection` | | |
+| `enableAmPmButtons` |  | |
+| `faceTicksLargeLength` |  | |
+| `faceTicksLargeOptions` | | |
+| `faceTicksTinyLength` | | |
+| `faceTicksTinyOptions` | | |
+| `faceCircleOptions` | | |
+| `faceOverlayOptions` | | |
+
 ##Requirements
 - [jQuery 2.2.0](https://jquery.com)
 - [jQuery UI 1.11.4](https://jquery.com)
