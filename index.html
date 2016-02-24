@@ -1,238 +1,271 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="description" content="jQueryClockIntervalPicker : jQuery plugin time selection picker clock">
-      <title>jQueryClockIntervalPicker</title>
+    <title>jQueryClockIntervalPicker</title>
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-      <link  rel="stylesheet" type="text/css" href="stylesheets/clockIntervalPicker.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/clockIntervalPicker.css">
 
-      <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
-      <script src="http://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-      <script src="lib/jquery.svg.js"></script>
-      <script src="javascripts/jquery.clockIntervalPicker.min.js"></script>
+    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+    <script src="lib/jquery.svg.js"></script>
+    <script src="javascripts/jquery.clockIntervalPicker.min.js"></script>
 
-      <script>
-          $( document ).ready( function () {
-              var picker = $( "#time-picker" ).clockTimeIntervalPicker();
-              picker.on( "selectionStarted", function( event, timeObj ) {
-                  console.log("selectionStarted");
-                  console.log(timeObj);
-              });
-              picker.on( "selectionEnded", function( event, interval ) {
-                  console.log("selectionEnded");
-                  console.log(interval);
-              });
-              picker.on( "selectionChanged", function( event, data ) {
-                  console.log("selectionChanged");
-                  console.log(data.intervals);
-              });
-          } );
-      </script>
-  </head>
+    <script>
+        $(document).ready(function () {
+            var picker = $("#time-picker").clockTimeIntervalPicker();
+            picker.on("selectionStarted", function (event, timeObj) {
+                console.log("selectionStarted");
+                console.log(timeObj);
+            });
+            picker.on("selectionEnded", function (event, interval) {
+                console.log("selectionEnded");
+                console.log(interval);
+            });
+            picker.on("selectionChanged", function (event, data) {
+                console.log("selectionChanged");
+                console.log(data.intervals);
+            });
+        });
+    </script>
+</head>
 
-  <body>
+<body>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/JoHae/jQueryClockIntervalPicker">View on GitHub</a>
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+    <header class="inner">
+        <a id="forkme_banner" href="https://github.com/JoHae/jQueryClockIntervalPicker">View on GitHub</a>
 
-          <h1 id="project_title">jQueryClockIntervalPicker</h1>
-          <h2 id="project_tagline">jQuery plugin time selection picker clock</h2>
+        <h1 id="project_title">jQueryClockIntervalPicker</h1>
+        <h2 id="project_tagline">jQuery plugin time selection picker clock</h2>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JoHae/jQueryClockIntervalPicker/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JoHae/jQueryClockIntervalPicker/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+        <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/JoHae/jQueryClockIntervalPicker/zipball/master">Download
+                this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/JoHae/jQueryClockIntervalPicker/tarball/master">Download
+                this project as a tar.gz file</a>
+        </section>
+    </header>
+</div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
         <h1>
-<a id="jqueryclockintervalpicker" class="anchor" href="#jqueryclockintervalpicker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jQueryClockIntervalPicker</h1>
+            <a id="jqueryclockintervalpicker" class="anchor" href="#jqueryclockintervalpicker" aria-hidden="true"><span
+                    aria-hidden="true" class="octicon octicon-link"></span></a>jQueryClockIntervalPicker</h1>
 
-<h2>
-<a id="what-" class="anchor" href="#what-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What ?</h2>
+        <h2>
+            <a id="what-" class="anchor" href="#what-" aria-hidden="true"><span aria-hidden="true"
+                                                                                class="octicon octicon-link"></span></a>What
+            ?</h2>
 
-<p>A jQuery plugin for interactive time-interval selection based on a clock metaphor.</p>
+        <p>A jQuery plugin for interactive time-interval selection based on a clock metaphor.</p>
 
-<h2>
-<a id="example" class="anchor" href="#example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h2>
+        <h2>
+            <a id="example" class="anchor" href="#example" aria-hidden="true"><span aria-hidden="true"
+                                                                                    class="octicon octicon-link"></span></a>Example
+        </h2>
 
-<div id="time-picker"></div>
+        <div id="time-picker"></div>
 
-<h2>
-<a id="usage---interaction" class="anchor" href="#usage---interaction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage - Interaction</h2>
+        <h2>
+            <a id="usage---interaction" class="anchor" href="#usage---interaction" aria-hidden="true"><span
+                    aria-hidden="true" class="octicon octicon-link"></span></a>Usage - Interaction</h2>
 
-<table>
-<thead>
-<tr>
-<th>Commands</th>
-<th><code>no key</code></th>
-<th><code>Ctrl-hold</code></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>click</code></td>
-<td>Select a point in time.</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>double-click</code></td>
-<td>Select everything.</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>right-click</code></td>
-<td>Reset all intervals.</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>drag 'n' drop</code></td>
-<td>Reset current. Select interval.</td>
-<td>Add selection.</td>
-</tr>
-</tbody>
-</table>
+        <table>
+            <thead>
+            <tr>
+                <th>Commands</th>
+                <th><code>no key</code></th>
+                <th><code>Ctrl-hold</code></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>click</code></td>
+                <td>Reset current - Select a point in time</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td><code>right-click</code></td>
+                <td>Reset all intervals if there is at least one interval, select everything if there is no selection</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td><code>drag 'n' drop</code></td>
+                <td>Reset current - Select interval</td>
+                <td>Add selection.</td>
+            </tr>
+            </tbody>
+        </table>
 
-<h2>
-<a id="usage---events" class="anchor" href="#usage---events" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage - Events</h2>
+        <h2>
+            <a id="usage---events" class="anchor" href="#usage---events" aria-hidden="true"><span aria-hidden="true"
+                                                                                                  class="octicon octicon-link"></span></a>Usage
+            - Events</h2>
 
-<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">"</span>time-picker<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
+        <div class="highlight highlight-text-html-basic">
+            <pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span
+                    class="pl-pds">"</span>time-picker<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">div</span>&gt;</pre>
+        </div>
 
-<p>...</p>
+        <p>...</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>( <span class="pl-s"><span class="pl-pds">"</span>#time-picker<span class="pl-pds">"</span></span> ).<span class="pl-en">clockTimeIntervalPicker</span>()
-    .<span class="pl-en">on</span>( <span class="pl-s"><span class="pl-pds">"</span>selectionStarted<span class="pl-pds">"</span></span>, <span class="pl-k">function</span>( <span class="pl-smi">event</span>, <span class="pl-smi">timeObj</span> ) {
+        <div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>( <span class="pl-s"><span
+                class="pl-pds">"</span>#time-picker<span class="pl-pds">"</span></span> ).<span class="pl-en">clockTimeIntervalPicker</span>()
+    .<span class="pl-en">on</span>( <span class="pl-s"><span class="pl-pds">"</span>selectionStarted<span
+                    class="pl-pds">"</span></span>, <span class="pl-k">function</span>( <span
+                    class="pl-smi">event</span>, <span class="pl-smi">timeObj</span> ) {
         <span class="pl-c">// Selection started Event - Returns the startTime</span>
     })
-    .<span class="pl-en">on</span>( <span class="pl-s"><span class="pl-pds">"</span>selectionEnded<span class="pl-pds">"</span></span>, <span class="pl-k">function</span>( <span class="pl-smi">event</span>, <span class="pl-smi">interval</span> ) {
+    .<span class="pl-en">on</span>( <span class="pl-s"><span class="pl-pds">"</span>selectionEnded<span
+                    class="pl-pds">"</span></span>, <span class="pl-k">function</span>( <span
+                    class="pl-smi">event</span>, <span class="pl-smi">interval</span> ) {
         <span class="pl-c">// Selection ended Event - Returns selected interval</span>
     })
-    .<span class="pl-en">on</span>( <span class="pl-s"><span class="pl-pds">"</span>selectionChanged<span class="pl-pds">"</span></span>, <span class="pl-k">function</span>( <span class="pl-smi">event</span>, <span class="pl-smi">data</span> ) {
+    .<span class="pl-en">on</span>( <span class="pl-s"><span class="pl-pds">"</span>selectionChanged<span
+                    class="pl-pds">"</span></span>, <span class="pl-k">function</span>( <span
+                    class="pl-smi">event</span>, <span class="pl-smi">data</span> ) {
         <span class="pl-c">// Selection changed Event - Returns all intervals</span>
-    });</pre></div>
+    });</pre>
+        </div>
 
-<h2>
-<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
+        <h2>
+            <a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true"
+                                                                                    class="octicon octicon-link"></span></a>Options
+        </h2>
 
-<p>You can pass an options object on initialization:</p>
+        <p>You can pass an options object on initialization:</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>( <span class="pl-s"><span class="pl-pds">"</span>#time-picker<span class="pl-pds">"</span></span> ).<span class="pl-en">clockTimeIntervalPicker</span>({circleRadius <span class="pl-k">:</span> <span class="pl-c1">100</span>});</pre></div>
+        <div class="highlight highlight-source-js">
+    <pre>
+        <span class="pl-en">$</span>( <span class="pl-s"><span class="pl-pds">"</span>#time-picker<span
+            class="pl-pds">"</span></span> ).<span class="pl-en">clockTimeIntervalPicker</span>({circleRadius <span
+            class="pl-k">:</span> <span class="pl-c1">100</span>});</pre>
+        </div>
 
-<h3>
-<a id="list-of-available-options" class="anchor" href="#list-of-available-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>List of available Options</h3>
+        <h3>
+            <a id="list-of-available-options" class="anchor" href="#list-of-available-options" aria-hidden="true"><span
+                    aria-hidden="true" class="octicon octicon-link"></span></a>List of available Options</h3>
 
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>circleRadius</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>multiSelection</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>enableAmPmButtons</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>faceTicksLargeLength</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>faceTicksLargeOptions</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>faceTicksTinyLength</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>faceTicksTinyOptions</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>faceCircleOptions</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>faceOverlayOptions</code></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
+        <table>
+            <thead>
+            <tr>
+                <th>Option</th>
+                <th>Description</th>
+                <th>Default</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>circleRadius</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><code>multiSelection</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><code>enableAmPmButtons</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><code>faceTicksLargeLength</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><code>faceTicksLargeOptions</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><code>faceTicksTinyLength</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><code>faceTicksTinyOptions</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><code>faceCircleOptions</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><code>faceOverlayOptions</code></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
 
-<h2>
-<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
+        <h2>
+            <a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true"
+                                                                                              class="octicon octicon-link"></span></a>Requirements
+        </h2>
 
-<ul>
-<li><a href="https://jquery.com">jQuery 2.2.0</a></li>
-<li><a href="https://jquery.com">jQuery UI 1.11.4</a></li>
-<li><a href="https://jquery.com">jQuery SVG 1.5.0</a></li>
-</ul>
+        <ul>
+            <li><a href="https://jquery.com">jQuery 2.2.0</a></li>
+            <li><a href="https://jquery.com">jQuery UI 1.11.4</a></li>
+            <li><a href="https://jquery.com">jQuery SVG 1.5.0</a></li>
+        </ul>
 
-<p>Other versions could work as well but are not tested yet.</p>
+        <p>Other versions could work as well but are not tested yet.</p>
 
-<h2>
-<a id="found-a-bug-or-got-ideas-for-new-features-" class="anchor" href="#found-a-bug-or-got-ideas-for-new-features-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Found a bug or got ideas for new features ?</h2>
+        <h2>
+            <a id="found-a-bug-or-got-ideas-for-new-features-" class="anchor"
+               href="#found-a-bug-or-got-ideas-for-new-features-" aria-hidden="true"><span aria-hidden="true"
+                                                                                           class="octicon octicon-link"></span></a>Found
+            a bug or got ideas for new features ?</h2>
 
-<p>Submit an issue above or here: </p>
+        <p>Submit an issue above or here: </p>
 
-<p><a href="https://github.com/JoHae/jQueryClockIntervalPicker/issues">https://github.com/JoHae/jQueryClockIntervalPicker/issues</a></p>
+        <p><a href="https://github.com/JoHae/jQueryClockIntervalPicker/issues">https://github.com/JoHae/jQueryClockIntervalPicker/issues</a>
+        </p>
 
-<h2>
-<a id="work-in-progress" class="anchor" href="#work-in-progress" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Work in Progress</h2>
+        <h2>
+            <a id="work-in-progress" class="anchor" href="#work-in-progress" aria-hidden="true"><span aria-hidden="true"
+                                                                                                      class="octicon octicon-link"></span></a>Work
+            in Progress</h2>
 
-<ul>
-<li>[ ] Combine width / height of div and radius</li>
-<li>[ ] 0 - 23 h Clock Layout</li>
-<li>[ ] Costumizable ticks in minutes</li>
-<li>[ ] Text labels for hours</li>
-<li>[ ] Add intervals programmatically</li>
-</ul>
+        <ul>
+            <li>[ ] Combine width / height of div and radius</li>
+            <li>[ ] 0 - 23 h Clock Layout</li>
+            <li>[ ] Costumizable ticks in minutes</li>
+            <li>[ ] Text labels for hours</li>
+            <li>[ ] Add intervals programmatically</li>
+        </ul>
 
-<h2>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+        <h2>
+            <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true"
+                                                                                    class="octicon octicon-link"></span></a>License
+        </h2>
 
-<p>MIT License (MIT)</p>
-      </section>
-    </div>
+        <p>MIT License (MIT)</p>
+    </section>
+</div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+    <footer class="inner">
         <p class="copyright">jQueryClockIntervalPicker maintained by <a href="https://github.com/JoHae">JoHae</a></p>
         <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+    </footer>
+</div>
 
-    
 
-  </body>
+</body>
 </html>
