@@ -33,7 +33,7 @@ $( "#time-picker" ).clockTimeIntervalPicker()
 ```
 
 ##Options
-Just pass an options object on initialization:
+You can pass an options object on initialization:
 ```javascript
 $( "#time-picker" ).clockTimeIntervalPicker({circleRadius : 100});
 ```
