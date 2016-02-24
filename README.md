@@ -17,9 +17,11 @@ Visit the project page:
 ##Usage - Events
 
 ##Requirements
-- jQuery     Version 2.2.0  : <https://jquery.com>
-- jQuery UI  Version 1.11.4 : <http://jqueryui.com>
-- jQuery SVG Version 1.5.0  : <http://keith-wood.name/svg.html>
+- [jQuery 2.2.0](https://jquery.com)
+- [jQuery UI 1.11.4](https://jquery.com)
+- [jQuery SVG 1.5.0](https://jquery.com)
+
+Other versions could work as well but are not tested yet.
 
 ##Found a bug or got ideas for new features ? 
 
