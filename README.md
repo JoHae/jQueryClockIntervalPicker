@@ -7,11 +7,12 @@ A costumizable clock with the ability to choose time intervals interactively.
 Visit the project page: 
 
 ##Usage - Interaction
-| Command | Description |
-| --- | --- |
-| `click` | Select a point in time. |
-| `double-click` | Select everything. |
-| `right-click` | Reset selection. |
+| Commands | `no key` | `Ctrl-hold` |
+| --- | --- | --- |
+| `click` | Select a point in time. | - |
+| `double-click` | Select everything. | - |
+| `right-click` | Reset all intervals. | - |
+| `drag 'n' drop` | Reset current. Select interval. | Add selection. |
 
 ##Usage - Events
 
