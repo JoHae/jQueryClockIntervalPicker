@@ -15,17 +15,21 @@ Visit the project page:
 | `drag 'n' drop` | Reset current. Select interval. | Add selection. |
 
 ##Usage - Events
+```html
+<div id="time-picker"></div>
+```
+...
 ```javascript
-var picker = $( "#time-picker" ).clockTimeIntervalPicker();
-.on( "selectionStarted", function( event, timeObj ) {
-    // Selection started Event - Returns the startTime
-})
-.on( "selectionEnded", function( event, interval ) {
-    // Selection ended Event - Returns selected interval
-})
-.on( "selectionChanged", function( event, data ) {
-    // Selection changed Event - Returns all intervals
-});
+$( "#time-picker" ).clockTimeIntervalPicker()
+    .on( "selectionStarted", function( event, timeObj ) {
+        // Selection started Event - Returns the startTime
+    })
+    .on( "selectionEnded", function( event, interval ) {
+        // Selection ended Event - Returns selected interval
+    })
+    .on( "selectionChanged", function( event, data ) {
+        // Selection changed Event - Returns all intervals
+    });
 ```
 
 ##Requirements
