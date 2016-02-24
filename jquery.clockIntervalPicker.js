@@ -269,10 +269,11 @@ $(function () {
         _getIntervalsFromTimeObj : function(startTime, endTime, amEnabled, pmEnabled) {
             var intervals = [];
 
+            // Copy objects
+            var firstStart = $.extend({},startTime);
+            var firstEnd = $.extend({},endTime);
+
             if (amEnabled && pmEnabled) {
-                // Copy objects
-                var firstStart = $.extend({},startTime);
-                var firstEnd = $.extend({},endTime);
                 var secondStart = $.extend({},startTime);
                 var secondEnd = $.extend({},endTime);
 
@@ -296,11 +297,11 @@ $(function () {
                  * First Interval (startTime is PM)
                  */
                 if(startTime.hours < 12) {
-                    secondStart.hours += 12
+                    secondStart.hours += 12;
                 }
 
                 if(endTime != null && endTime.hours < 12 && endTime.hours > startTime.hours) {
-                    secondEnd.hours += 12
+                    secondEnd.hours += 12;
                 }
 
                 // If endTime is AM we have to subtract 12
@@ -312,6 +313,21 @@ $(function () {
                 intervals.push({startTime : secondStart, endTime: secondEnd});
 
             } else if (pmEnabled) {
+                if(startTime.hours < 12) {
+                    firstStart.hours += 12;
+                }
+
+                if(endTime != null && endTime.hours < 12 && endTime.hours > startTime.hours) {
+                    firstStart.hours += 12
+                }
+
+                // If endTime is AM we have to subtract 12
+                if(endTime != null) {
+                    if (endTime.hours < startTime.hours) {
+                        firstStart.hours -= 12;
+                    }
+                }
+                intervals.push({startTime : firstStart, endTime: firstStart});
 
             }
 
