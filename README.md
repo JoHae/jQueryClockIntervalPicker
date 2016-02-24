@@ -12,7 +12,7 @@ A costumizable clock with the ability to choose time intervals interactively.
 - jQuery UI  Version 1.11.4 : <http://jqueryui.com>
 - jQuery SVG Version 1.5.0  : <http://keith-wood.name/svg.html>
 
-##Found a bug ? 
+##Found a bug or got ideas for new features ? 
 
 Submit a bug report above or here: 
 
