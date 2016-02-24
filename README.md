@@ -14,7 +14,7 @@ A costumizable clock with the ability to choose time intervals interactively.
 
 ##Found a bug or got ideas for new features ? 
 
-Submit a bug report above or here: 
+Submit an issue above or here: 
 
 <https://github.com/JoHae/jQueryClockIntervalPicker/issues>
 
