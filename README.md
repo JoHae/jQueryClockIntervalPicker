@@ -7,6 +7,8 @@ A costumizable clock with the ability to choose time intervals interactively.
 
 ##Usage
 
+##Requirements
+
 ##Found a bug ? 
 
 Submit a bug report above or here: 
