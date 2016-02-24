@@ -4,39 +4,11 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="jQueryClockIntervalPicker : ">
+    <meta name="description" content="jQueryClockIntervalPicker : jQuery plugin time selection picker clock">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-      <link  rel="stylesheet" type="text/css" href="stylesheets/clockIntervalPicker.css">
-
-      <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
-      <script src="http://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-      <script src="lib/jquery.svg.js"></script>
-      <script src="javascripts/jquery.clockIntervalPicker.js"></script>
-
-
     <title>jQueryClockIntervalPicker</title>
-
-      <script>
-          $( document ).ready( function () {
-              var picker = $( "#time-picker" ).clockTimeIntervalPicker();
-              picker.on( "selectionStarted", function( event, timeObj ) {
-                  console.log("selectionStarted");
-                  console.log(timeObj);
-              });
-              picker.on( "selectionEnded", function( event, interval ) {
-                  console.log("selectionEnded");
-                  console.log(interval);
-              });
-              picker.on( "selectionChanged", function( event, data ) {
-                  console.log("selectionChanged");
-                  console.log(data.intervals);
-              });
-          } );
-      </script>
-
   </head>
 
   <body>
@@ -47,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/JoHae/jQueryClockIntervalPicker">View on GitHub</a>
 
           <h1 id="project_title">jQueryClockIntervalPicker</h1>
-          <h2 id="project_tagline"></h2>
+          <h2 id="project_tagline">jQuery plugin time selection picker clock</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/JoHae/jQueryClockIntervalPicker/zipball/master">Download this project as a .zip file</a>
@@ -65,12 +37,12 @@
 <h2>
 <a id="what-" class="anchor" href="#what-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What ?</h2>
 
-<p>A costumizable clock with the ability to choose time intervals interactively.</p>
+<p>A jQuery plugin for interactive time-interval selection based on a clock metaphor.</p>
 
 <h2>
 <a id="example" class="anchor" href="#example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h2>
 
-<div id="time-picker"></div>
+<p>visit the <a href="http://johae.github.io/jQueryClockIntervalPicker">Project Page</a> or see example folder of the repository .</p>
 
 <h2>
 <a id="usage---interaction" class="anchor" href="#usage---interaction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage - Interaction</h2>
@@ -126,6 +98,73 @@
     });</pre></div>
 
 <h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
+
+<p>You can pass an options object on initialization:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>( <span class="pl-s"><span class="pl-pds">"</span>#time-picker<span class="pl-pds">"</span></span> ).<span class="pl-en">clockTimeIntervalPicker</span>({circleRadius <span class="pl-k">:</span> <span class="pl-c1">100</span>});</pre></div>
+
+<h3>
+<a id="list-of-available-options" class="anchor" href="#list-of-available-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>List of available Options</h3>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>circleRadius</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>multiSelection</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>enableAmPmButtons</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>faceTicksLargeLength</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>faceTicksLargeOptions</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>faceTicksTinyLength</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>faceTicksTinyOptions</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>faceCircleOptions</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>faceOverlayOptions</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h2>
 <a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
 
 <ul>
@@ -147,9 +186,11 @@
 <a id="work-in-progress" class="anchor" href="#work-in-progress" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Work in Progress</h2>
 
 <ul>
+<li>[ ] Combine width / height of div and radius</li>
 <li>[ ] 0 - 23 h Clock Layout</li>
 <li>[ ] Costumizable ticks in minutes</li>
 <li>[ ] Text labels for hours</li>
+<li>[ ] Add intervals programmatically</li>
 </ul>
 
 <h2>
