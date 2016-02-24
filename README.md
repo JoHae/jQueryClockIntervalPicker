@@ -1,7 +1,7 @@
 # jQueryClockIntervalPicker
 
 ##What ?
-A costumizable clock with the ability to choose time intervals interactively.
+A jQuery plugin for interactive time-interval selection based on a clock metaphor.
 
 ##Example
 visit the [Project Page](http://johae.github.io/jQueryClockIntervalPicker) or see example folder of the repository .
@@ -32,6 +32,25 @@ $( "#time-picker" ).clockTimeIntervalPicker()
     });
 ```
 
+##Options
+You can pass an options object on initialization:
+```javascript
+$( "#time-picker" ).clockTimeIntervalPicker({circleRadius : 100});
+```
+
+### List of available Options
+| Option | Description | Default |
+| --- | --- | --- |
+| `circleRadius` |  | |
+| `multiSelection` | | |
+| `enableAmPmButtons` |  | |
+| `faceTicksLargeLength` |  | |
+| `faceTicksLargeOptions` | | |
+| `faceTicksTinyLength` | | |
+| `faceTicksTinyOptions` | | |
+| `faceCircleOptions` | | |
+| `faceOverlayOptions` | | |
+
 ##Requirements
 - [jQuery 2.2.0](https://jquery.com)
 - [jQuery UI 1.11.4](https://jquery.com)
@@ -46,9 +65,11 @@ Submit an issue above or here:
 <https://github.com/JoHae/jQueryClockIntervalPicker/issues>
 
 ##Work in Progress
+- [ ] Combine width / height of div and radius
 - [ ] 0 - 23 h Clock Layout
 - [ ] Costumizable ticks in minutes
 - [ ] Text labels for hours
+- [ ] Add intervals programmatically
 
 ##License
 MIT License (MIT)
