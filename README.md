@@ -17,5 +17,5 @@ Submit a bug report above or here:
 
 ##Future Work
 
-# 0 - 23 h Clock Layout
-# Costumizable ticks in minutes
+- 0 - 23 h Clock Layout
+- Costumizable ticks in minutes
