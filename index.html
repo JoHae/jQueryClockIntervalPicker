@@ -5,17 +5,34 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="description" content="jQueryClockIntervalPicker : jQuery plugin time selection picker clock">
+      <title>jQueryClockIntervalPicker</title>
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
       <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
       <link  rel="stylesheet" type="text/css" href="stylesheets/clockIntervalPicker.css">
 
-      <script src="http://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
       <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+      <script src="http://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
       <script src="lib/jquery.svg.js"></script>
       <script src="javascripts/jquery.clockIntervalPicker.js"></script>
 
-    <title>jQueryClockIntervalPicker</title>
+      <script>
+          $( document ).ready( function () {
+              var picker = $( "#time-picker" ).clockTimeIntervalPicker();
+              picker.on( "selectionStarted", function( event, timeObj ) {
+                  console.log("selectionStarted");
+                  console.log(timeObj);
+              });
+              picker.on( "selectionEnded", function( event, interval ) {
+                  console.log("selectionEnded");
+                  console.log(interval);
+              });
+              picker.on( "selectionChanged", function( event, data ) {
+                  console.log("selectionChanged");
+                  console.log(data.intervals);
+              });
+          } );
+      </script>
   </head>
 
   <body>
