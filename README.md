@@ -49,3 +49,6 @@ Submit an issue above or here:
 - [ ] 0 - 23 h Clock Layout
 - [ ] Costumizable ticks in minutes
 - [ ] Text labels for hours
+
+##Licence
+MIT
