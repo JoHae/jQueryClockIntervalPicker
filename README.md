@@ -9,9 +9,9 @@ visit the [Project Page](http://johae.github.io/jQueryClockIntervalPicker) or se
 ##Usage - Interaction
 | Commands | `no key` | `Ctrl-hold` |
 | --- | --- | --- |
-| `click` | Select a point in time | - |
+| `click` | Reset current - Select a point in time | - |
 | `right-click` | Reset all intervals if there is at least one interval, select everything if there is no selection | - |
-| `drag 'n' drop` | Reset current. Select interval | Add selection |
+| `drag 'n' drop` | Reset current - Select interval | Add selection |
 
 ##Usage - Events
 ```html
