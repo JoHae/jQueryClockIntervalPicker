@@ -91,7 +91,7 @@ $(function () {
                 _this._clearTextSelection();
 
                 // Right Click to reset / select all if no interval exists
-                if (event.which == 3) {
+                if (event.which === 3) {
                     if(_this.intervalCount > 0) {
                         _this._clearSelection();
                         _this.element.trigger("selectionChanged", {
@@ -159,7 +159,7 @@ $(function () {
             });
 
             this.element.svgContainer.mouseup(function (event) {
-                if (event.which == 3) {
+                if (event.which === 3) {
                     return;
                 }
 
@@ -194,7 +194,7 @@ $(function () {
             });
 
             this.element.svgContainer.mousemove(function (event) {
-                if (event.pageX == lastX && event.pageY == lastY) {
+                if (event.pageX === lastX && event.pageY === lastY) {
                     return;
                 }
                 lastX = event.pageX;
@@ -281,7 +281,7 @@ $(function () {
                 amPmLabel = PM_LABEL;
             }
 
-            if (this.actualStartTime != null) {
+            if (this.actualStartTime !== null) {
                 tooltipText += this._timeObjectToString(this.actualStartTime);
                 if (!this.amEnabled || !this.pmEnabled) {
                     tooltipText += ' ' + amPmLabel;
@@ -290,10 +290,10 @@ $(function () {
 
                 // Switch AM/PM if startTime is before 12 and timeObj after 12
                 var hourDiff = this.actualStartTime.hours - timeObj.hours;
-                if (this.actualStartTime.hours < 12 && (timeObj.hours >= 12 || hourDiff > 0 || hourDiff == 0 && this.actualStartTime.minutes > timeObj.minutes)) {
-                    if (amPmLabel == AM_LABEL) {
+                if (this.actualStartTime.hours < 12 && (timeObj.hours >= 12 || hourDiff > 0 || hourDiff === 0 && this.actualStartTime.minutes > timeObj.minutes)) {
+                    if (amPmLabel === AM_LABEL) {
                         amPmLabel = PM_LABEL;
-                    } else if (amPmLabel == PM_LABEL) {
+                    } else if (amPmLabel === PM_LABEL) {
                         amPmLabel = AM_LABEL;
                     }
                 }
@@ -314,13 +314,16 @@ $(function () {
             var decimalValue = 3.0 - ( 1.0 / 30.0 ) * ( angle % 360 ) * -1;
 
             // Normalize from 12 - 11
-            if (decimalValue < 0)
+            if (decimalValue < 0) {
                 decimalValue += 12.0;
-            if (decimalValue > 12)
+            }
+            if (decimalValue > 12) {
                 decimalValue -= 12.0;
+            }
             var hours = parseInt(decimalValue);
-            if (hours == 0)
+            if (hours === 0) {
                 hours = 12;
+            }
             var minutes = parseInt(decimalValue * 60) % 60;
 
             return {hours: hours, minutes: minutes};
@@ -341,12 +344,12 @@ $(function () {
                  * First Interval (startTime is AM)
                  */
                 // If startTime is 12 we have to subtract 12 to get 0
-                if(startTime.hours == 12) {
+                if(startTime.hours === 12) {
                     firstStart.hours -= 12;
                 }
 
                 // If endTime is PM we have to add 12
-                if(endTime != null) {
+                if(endTime !== null) {
                     if(endTime.hours <  startTime.hours && startTime.hours < 12) {
                         firstEnd.hours += 12;
                     }
@@ -363,12 +366,12 @@ $(function () {
                 }
 
                 // If endTime is AM we have to subtract 12
-                if(endTime != null) {
+                if(endTime !== null) {
                     if(endTime.hours < 12 && endTime.hours > startTime.hours) {
                         secondEnd.hours += 12;
                     }
 
-                    if (endTime.hours <= startTime.hours && endTime.hours == 12) {
+                    if (endTime.hours <= startTime.hours && endTime.hours === 12) {
                         secondEnd.hours -= 12;
                     }
                     intervals.push({startTime : secondStart, endTime: secondEnd});
@@ -382,12 +385,12 @@ $(function () {
                 }
 
                 // If endTime is AM and 12 we have to subtract 12
-                if(endTime != null) {
+                if(endTime !== null) {
                     if(endTime.hours < 12 && endTime.hours > startTime.hours) {
-                        firstEnd.hours += 12
+                        firstEnd.hours += 12;
                     }
 
-                    if (endTime.hours <= firstStart.hours && endTime.hours == 12) {
+                    if (endTime.hours <= firstStart.hours && endTime.hours === 12) {
                         firstEnd.hours -= 12;
                     }
                     intervals.push({startTime : firstStart, endTime: firstEnd});
@@ -396,12 +399,12 @@ $(function () {
                 }
 
             } else if(amEnabled) {
-                if(startTime.hours == 12) {
+                if(startTime.hours === 12) {
                     firstStart.hours -= 12;
                 }
 
                 // If endTime is PM we have to add 12
-                if(endTime != null) {
+                if(endTime !== null) {
                     if(endTime.hours <  startTime.hours && startTime.hours < 12) {
                         firstEnd.hours += 12;
                     }
@@ -433,7 +436,7 @@ $(function () {
                     }
                 }
             }
-            if (this.interactionGroups.length != this.intervalCount) {
+            if (this.interactionGroups.length !== this.intervalCount) {
                 console.error("length: " + this.interactionGroups.length);
                 console.error("Count:  " + this.intervalCount);
             }
@@ -441,7 +444,7 @@ $(function () {
             this.interactionGroups.push(this.svg.group(this.interactionGroupOptions));
 
             this.arcPath = this.svg.createPath();
-            if (arcEndPoint == null) {
+            if (arcEndPoint === null) {
                 // Just draw a line
                 this.arcPath.move(0, 0).line([[0, 0], [this.actualArcStartPoint.x, this.actualArcStartPoint.y]]).close();
             } else {
@@ -451,14 +454,12 @@ $(function () {
 
                 if (this.actualArcStartPoint.angle >= 90 && this.actualArcStartPoint.angle <= 180) {
                     // Between 12 and 3
-                    if (angleDiff < 0 && angleDiff > -90
-                        || angleDiff <= 360 && angleDiff > 180) {
+                    if (angleDiff < 0 && angleDiff > -90  || angleDiff <= 360 && angleDiff > 180) {
                         clockwise = 0;
                     } else {
                         clockwise = 1;
                     }
-                } else if (this.actualArcStartPoint.angle <= -90 && this.actualArcStartPoint.angle >= -180
-                    || this.actualArcStartPoint.angle >= -90 && this.actualArcStartPoint.angle <= 0) {
+                } else if (this.actualArcStartPoint.angle <= -90 && this.actualArcStartPoint.angle >= -180 || this.actualArcStartPoint.angle >= -90 && this.actualArcStartPoint.angle <= 0) {
                     // Between 3 and 9
                     if (angleDiff > -180 && angleDiff < 0) {
                         clockwise = 0;
@@ -467,8 +468,7 @@ $(function () {
                     }
                 } else if (this.actualArcStartPoint.angle >= 0 && this.actualArcStartPoint.angle <= 90) {
                     // Between 9 and 12
-                    if (angleDiff < 0 && angleDiff > -180
-                        || angleDiff > 180) {
+                    if (angleDiff < 0 && angleDiff > -180 || angleDiff > 180) {
                         clockwise = 0;
                     } else {
                         clockwise = 1;
@@ -552,27 +552,17 @@ $(function () {
                     $('input:radio[name=radio]').change(function () {
                         _this.amEnabled = false;
                         _this.pmEnabled = false;
-                        if (this.value == AM_LABEL) {
+                        if (this.value === AM_LABEL) {
                             _this.amEnabled = true;
-                        } else if (this.value == PM_LABEL) {
+                        } else if (this.value === PM_LABEL) {
                             _this.pmEnabled = true;
-                        } else if (this.value == AM_PM_LABEL) {
+                        } else if (this.value === AM_PM_LABEL) {
                             _this.amEnabled = true;
                             _this.pmEnabled = true;
                         }
                     });
                 }
             }
-
-
-            this.svgWidthHeight = 2 * (this.options.circleRadius + TEXT_OFFSET);
-            if (this.options.showFaceCircle) {
-                this.svgWidthHeight += 2 * this.options.faceCircleOptions.strokeWidth
-            }
-            this.element.svgContainer = $('<div></div>').attr('id', 'jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
-            this.element.svgContainer.svg({
-                onLoad: drawClock
-            });
 
             function drawClock(svg) {
                 _this.svg = svg;
@@ -591,8 +581,8 @@ $(function () {
 
                 // Small ticks
                 var lengthShort = _this.options.circleRadius - _this.options.faceTicksTinyLength;
+                var tOptions = _this.options.faceTicksTinyOptions;
                 for (var i = 0; i < 360; i += 6) {
-                    var tOptions = _this.options.faceTicksTinyOptions;
                     tOptions.transform = 'rotate(' + i + ')';
                     svg.line(svgClockFaceGroup, 0, _this.options.circleRadius, 0, lengthShort, tOptions);
                 }
@@ -617,13 +607,22 @@ $(function () {
                 // Later for ticks
                 //svg.path(g, path.move(0,0).line([[0,0], [0,radius]]), {transform:'rotate(30)',stroke:'blue'});
             }
+
+            this.svgWidthHeight = 2 * (this.options.circleRadius + TEXT_OFFSET);
+            if (this.options.showFaceCircle) {
+                this.svgWidthHeight += 2 * this.options.faceCircleOptions.strokeWidth;
+            }
+            this.element.svgContainer = $('<div></div>').attr('id', 'jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
+            this.element.svgContainer.svg({
+                onLoad: drawClock
+            });
         },
 
         _destroy: function () {
 
         },
 
-        _setOption: function (key, value) {
+        _setOption: function () {
             // TODO: Implement
             //if(name === 'maxItems') {
             //    this._resizeBoxForMaxItemsOf(value);
