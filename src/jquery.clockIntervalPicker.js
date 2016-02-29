@@ -517,14 +517,14 @@ $(function () {
             var _this = this;
 
             // Time tooltip
-            this.element.tooltipContainer = $('<div></div>').attr('id', 'jh-tooltip-container').hide().appendTo(this.element);
+            this.element.tooltipContainer = $('<div></div>').addClass('jh-tooltip-container').hide().appendTo(this.element);
             var amPmButtonContainer;
 
             if (this.options.showToggleLayoutButton || this.options.enableAmPmButtons) {
-                var buttonContainer = $('<div></div>').attr('id', 'jh-button-container').appendTo(this.element);
+                var buttonContainer = $('<div></div>').addClass('jh-button-container').appendTo(this.element);
 
                 if (this.options.showToggleLayoutButton) {
-                    var toggleButtonContainer = $('<div></div>').attr('id', 'jh-toggle-button-container').css('float', 'left').appendTo(buttonContainer).css('float', 'right');
+                    var toggleButtonContainer = $('<div></div>').addClass('jh-toggle-button-container').css('float', 'left').appendTo(buttonContainer).css('float', 'right');
                     $(' <input type="checkbox" id="clockLayout"><label for="clockLayout">24h</label> ').appendTo(toggleButtonContainer);
                     $('#clockLayout').button().on('change', function () {
                         var val = $(this).is(':checked');
@@ -542,7 +542,7 @@ $(function () {
 
                 // AM/PM Buttons
                 if (this.options.enableAmPmButtons) {
-                    amPmButtonContainer = $('<div></div>').attr('id', 'jh-am-pm-button-container').css('float', 'left').appendTo(buttonContainer);
+                    amPmButtonContainer = $('<div></div>').addClass('jh-am-pm-button-container').css('float', 'left').appendTo(buttonContainer);
                     $(' <input type="radio" id="jh-am-button" name="radio" value="' + AM_LABEL + '"><label for="jh-am-button">' + AM_LABEL + '</label>').appendTo(amPmButtonContainer);
                     $(' <input type="radio" id="jh-pm-button" name="radio" value="' + PM_LABEL + '"><label for="jh-pm-button">' + PM_LABEL + '</label>').appendTo(amPmButtonContainer);
                     $(' <input type="radio" id="jh-both-button" name="radio"  value="' + AM_PM_LABEL + '" checked="checked"><label for="jh-both-button">' + AM_PM_LABEL + '</label>').appendTo(amPmButtonContainer);
@@ -612,7 +612,7 @@ $(function () {
             if (this.options.showFaceCircle) {
                 this.svgWidthHeight += 2 * this.options.faceCircleOptions.strokeWidth;
             }
-            this.element.svgContainer = $('<div></div>').attr('id', 'jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
+            this.element.svgContainer = $('<div></div>').addClass('jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
             this.element.svgContainer.svg({
                 onLoad: drawClock
             });

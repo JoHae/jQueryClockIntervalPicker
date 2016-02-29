@@ -1,7 +1,8 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var srcFile = 'src/jquery.clockIntervalPicker.js';
+    var jsFile = 'src/jquery.clockIntervalPicker.js';
+    var cssFile = 'src/clockIntervalPicker.css';
 
     // Project configuration.
     grunt.initConfig({
@@ -11,19 +12,22 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: srcFile,
+                src: jsFile,
                 dest: 'build/<%= pkg.name %>.min.js'
             }
         },
         jshint: {
-                src: [srcFile]
+            src: [jsFile]
         },
+        csslint: {
+            src: [cssFile]
+        }
     });
 
-    // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-csslint');
 
     // Default task(s).
-    grunt.registerTask('default', ['jshint', 'uglify']);
+    grunt.registerTask('default', ['jshint', 'csslint', 'uglify']);
 };

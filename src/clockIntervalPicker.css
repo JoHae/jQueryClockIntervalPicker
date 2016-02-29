@@ -1,12 +1,12 @@
-#jh-svg-container {
+.jh-svg-container {
     margin: auto;
     cursor: crosshair;
 }
-#jh-tooltip-container {
+.jh-tooltip-container {
     position: absolute;
     background-color: white;
 }
-#jh-button-container {
+.jh-button-container {
     margin: 5px;
     height: 32px;
 }
