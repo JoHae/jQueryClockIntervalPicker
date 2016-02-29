@@ -3,6 +3,7 @@ module.exports = function(grunt) {
 
     var jsFile = 'src/jquery.clockIntervalPicker.js';
     var cssFile = 'src/clockIntervalPicker.css';
+    var htmlExampleFile = 'example/index.html';
 
     // Project configuration.
     grunt.initConfig({
@@ -21,13 +22,42 @@ module.exports = function(grunt) {
         },
         csslint: {
             src: [cssFile]
+        },
+        watch: {
+            options: {
+                spawn: false,
+                livereload:true
+            },
+            files: [htmlExampleFile, jsFile, cssFile],
+            tasks:['build']
+        },
+        connect: {
+            server: {
+                options: {
+                    port: 9000,
+                    base: {
+                        path: '.',
+                        options: {
+                            index: 'example/index.html'
+                        }
+                    },
+                    hostname: '0.0.0.0',
+                    protocol: 'http',
+                    livereload: true,
+                    open: true,
+                }
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-csslint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Default task(s).
-    grunt.registerTask('default', ['jshint', 'csslint', 'uglify']);
+    grunt.registerTask('build', ['jshint', 'csslint', 'uglify']);
+    grunt.registerTask('server', ['connect','watch']);
+    grunt.registerTask('default', ['build', 'server']);
 };
