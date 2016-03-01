@@ -38,13 +38,14 @@ module.exports = function(grunt) {
                     base: {
                         path: '.',
                         options: {
-                            index: 'example/index.html'
+                            index: 'example/index.html',
+                            maxAge: 300000
                         }
                     },
-                    hostname: '0.0.0.0',
+                    hostname: 'localhost',
                     protocol: 'http',
                     livereload: true,
-                    open: true,
+                    open: true
                 }
             }
         }
