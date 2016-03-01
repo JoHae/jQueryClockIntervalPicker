@@ -1,10 +1,6 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var jsFile = 'src/jquery.clockIntervalPicker.js';
-    var cssFile = 'src/clockIntervalPicker.css';
-    var htmlExampleFile = 'example/index.html';
-
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -13,22 +9,22 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: jsFile,
+                src: 'src/*.js',
                 dest: 'build/<%= pkg.name %>.min.js'
             }
         },
         jshint: {
-            src: [jsFile]
+            src: 'src/*.js'
         },
         csslint: {
-            src: [cssFile]
+            src: 'src/*.css'
         },
         watch: {
             options: {
                 spawn: false,
                 livereload:true
             },
-            files: [htmlExampleFile, jsFile, cssFile],
+            files: ['example/*.html', 'src/*.js', 'src/*.css'],
             tasks:['build']
         },
         connect: {
