@@ -7,8 +7,14 @@
     background-color: white;
 }
 .jh-button-container {
+    overflow: auto;
     margin: 5px;
-    height: 32px;
+}
+.jh-toggle-button-container {
+    float: right;
+}
+.jh-am-pm-button-container {
+    float: left;
 }
 .hour-label {
     font-size: 24px;

@@ -16,9 +16,8 @@ $(function () {
 
     $.widget('jh.clockTimeIntervalPicker', {
         options: {
-            width: 500,
+            width: 200,
             height: 500,
-            circleRadius: 200,
             multiSelection: true,
             showFaceCircle: false,
             enableAmPmButtons: true,
@@ -49,12 +48,17 @@ $(function () {
         },
 
         _create: function () {
+            // Calculate circle radius according to width / height / label font-size
+            this.circleRadius = Math.min(this.options.height, this.options.width) / 2 - 2 * parseInt(this._getCssClassValue('hour-label', 'font-size'));
+
+            console.log('Radius of Circle is:' + this.circleRadius);
+
             // Private vars
             var _this = this;
             var lastY = 0;
             var lastX = 0;
             var mouseDown = false;
-            var middle = this.options.circleRadius + TEXT_OFFSET;
+            var middle = this.circleRadius + TEXT_OFFSET;
             if (this.options.showFaceCircle) {
                 middle += this.options.faceCircleOptions.strokeWidth;
             }
@@ -125,7 +129,7 @@ $(function () {
 
                         // Draw a Circle
                         _this.interactionGroups.push(_this.svg.group(_this.interactionGroupOptions));
-                        _this.svg.circle(_this.interactionGroups[_this.intervalCount], 0, 0, _this.options.circleRadius);
+                        _this.svg.circle(_this.interactionGroups[_this.intervalCount], 0, 0, _this.circleRadius);
                         _this.intervalCount++;
                         _this.element.trigger("selectionChanged", {
                             intervals: _this.selectedIntervals
@@ -214,12 +218,19 @@ $(function () {
                     // Continue arc
                     // In order to have 0 - 360 degree
                     var angleOffset = angle + 180;
-                    var arcEndPoint = _this._polarToCartesian(0, 0, _this.options.circleRadius, angleOffset);
+                    var arcEndPoint = _this._polarToCartesian(0, 0, _this.circleRadius, angleOffset);
 
                     // Draw the Arc
                     _this._drawSvgArc(arcEndPoint, angleOffset);
                 }
             });
+        },
+
+        _getCssClassValue : function(className, attributeName) {
+            var $p = $("<p></p>").addClass(className).hide().appendTo(this.element);
+            var value = $p.css(attributeName);
+            $p.remove();
+            return value;
         },
 
         _getRelativePosition: function (x, y) {
@@ -257,8 +268,8 @@ $(function () {
 
             // See http://math.stackexchange.com/questions/700237/coordinates-of-sector-of-circle
             return {
-                x: this.options.circleRadius * Math.cos(radianAngle),
-                y: this.options.circleRadius * Math.sin(radianAngle) * -1,
+                x: this.circleRadius * Math.cos(radianAngle),
+                y: this.circleRadius * Math.sin(radianAngle) * -1,
                 angle: angle
             };
         },
@@ -477,7 +488,7 @@ $(function () {
 
                 this.arcPath.move(0, 0)
                     .line([[0, 0], [this.actualArcStartPoint.x, this.actualArcStartPoint.y]])
-                    .arc(this.options.circleRadius, this.options.circleRadius, 1, clockwise, 1, arcEndPoint.x, arcEndPoint.y)
+                    .arc(this.circleRadius, this.circleRadius, 1, clockwise, 1, arcEndPoint.x, arcEndPoint.y)
                     .line([[arcEndPoint.x, arcEndPoint.y], [0, 0]])
                     .close();
             }
@@ -524,7 +535,7 @@ $(function () {
                 var buttonContainer = $('<div></div>').addClass('jh-button-container').appendTo(this.element);
 
                 if (this.options.showToggleLayoutButton) {
-                    var toggleButtonContainer = $('<div></div>').addClass('jh-toggle-button-container').css('float', 'left').appendTo(buttonContainer).css('float', 'right');
+                    var toggleButtonContainer = $('<div></div>').addClass('jh-toggle-button-container').appendTo(buttonContainer);
                     $(' <input type="checkbox" id="clockLayout"><label for="clockLayout">24h</label> ').appendTo(toggleButtonContainer);
                     $('#clockLayout').button().on('change', function () {
                         var val = $(this).is(':checked');
@@ -542,7 +553,7 @@ $(function () {
 
                 // AM/PM Buttons
                 if (this.options.enableAmPmButtons) {
-                    amPmButtonContainer = $('<div></div>').addClass('jh-am-pm-button-container').css('float', 'left').appendTo(buttonContainer);
+                    amPmButtonContainer = $('<div></div>').addClass('jh-am-pm-button-container').appendTo(buttonContainer);
                     $(' <input type="radio" id="jh-am-button" name="radio" value="' + AM_LABEL + '"><label for="jh-am-button">' + AM_LABEL + '</label>').appendTo(amPmButtonContainer);
                     $(' <input type="radio" id="jh-pm-button" name="radio" value="' + PM_LABEL + '"><label for="jh-pm-button">' + PM_LABEL + '</label>').appendTo(amPmButtonContainer);
                     $(' <input type="radio" id="jh-both-button" name="radio"  value="' + AM_PM_LABEL + '" checked="checked"><label for="jh-both-button">' + AM_PM_LABEL + '</label>').appendTo(amPmButtonContainer);
@@ -568,7 +579,7 @@ $(function () {
                 _this.svg = svg;
                 $(svg.root()).attr('width', '100%').attr('height', '100%');
                 //$(svg.root()).removeAttr('width').removeAttr('height').attr('viewBox', '0 0 400 400');
-                var radius = _this.options.circleRadius;
+                var radius = _this.circleRadius;
                 var centerXY = _this.svgWidthHeight / 2;
 
                 if (_this.options.showFaceCircle) {
@@ -580,27 +591,27 @@ $(function () {
                 var svgClockFaceGroup = svg.group({stroke: 'black', transform: 'translate(' + dist + ',' + dist + ')'});
 
                 // Small ticks
-                var lengthShort = _this.options.circleRadius - _this.options.faceTicksTinyLength;
+                var lengthShort = _this.circleRadius - _this.options.faceTicksTinyLength;
                 var tOptions = _this.options.faceTicksTinyOptions;
                 for (var i = 0; i < 360; i += 6) {
                     tOptions.transform = 'rotate(' + i + ')';
-                    svg.line(svgClockFaceGroup, 0, _this.options.circleRadius, 0, lengthShort, tOptions);
+                    svg.line(svgClockFaceGroup, 0, _this.circleRadius, 0, lengthShort, tOptions);
                 }
 
                 // Large ticks (12-3-6-9)
-                var lengthLong = _this.options.circleRadius - _this.options.faceTicksLargeLength;
+                var lengthLong = _this.circleRadius - _this.options.faceTicksLargeLength;
                 for (i = 0; i < 360; i += 30) {
                     tOptions = _this.options.faceTicksLargeOptions;
                     tOptions.transform = 'rotate(' + i + ')';
-                    svg.line(svgClockFaceGroup, 0, _this.options.circleRadius, 0, lengthLong, tOptions);
+                    svg.line(svgClockFaceGroup, 0, _this.circleRadius, 0, lengthLong, tOptions);
                 }
 
                 // Text
                 if (_this.options.showHourLabels) {
-                    svg.text(svgClockFaceGroup, 0, _this.options.circleRadius + TEXT_OFFSET, "6");
-                    svg.text(svgClockFaceGroup, -_this.options.circleRadius - TEXT_OFFSET, 0, "9");
-                    svg.text(svgClockFaceGroup, 0, -_this.options.circleRadius - TEXT_OFFSET, "12");
-                    svg.text(svgClockFaceGroup, _this.options.circleRadius + TEXT_OFFSET, 0, "3");
+                    svg.text(svgClockFaceGroup, 0, _this.circleRadius + TEXT_OFFSET, "6");
+                    svg.text(svgClockFaceGroup, -_this.circleRadius - TEXT_OFFSET, 0, "9");
+                    svg.text(svgClockFaceGroup, 0, -_this.circleRadius - TEXT_OFFSET, "12");
+                    svg.text(svgClockFaceGroup, _this.circleRadius + TEXT_OFFSET, 0, "3");
                     $('text', svg.root()).attr('text-anchor', 'middle').addClass('hour-label');
                 }
 
@@ -608,7 +619,7 @@ $(function () {
                 //svg.path(g, path.move(0,0).line([[0,0], [0,radius]]), {transform:'rotate(30)',stroke:'blue'});
             }
 
-            this.svgWidthHeight = 2 * (this.options.circleRadius + TEXT_OFFSET);
+            this.svgWidthHeight = 2 * (this.circleRadius + TEXT_OFFSET);
             if (this.options.showFaceCircle) {
                 this.svgWidthHeight += 2 * this.options.faceCircleOptions.strokeWidth;
             }
