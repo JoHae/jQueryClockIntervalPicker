@@ -16,16 +16,22 @@ $(function () {
 
     $.widget('jh.clockTimeIntervalPicker', {
         options: {
-            width: 200,
+            width: 500,
             height: 500,
             multiSelection: true,
             showFaceCircle: false,
             enableAmPmButtons: true,
             showToggleLayoutButton: false,
             showHourLabels : false,
-            faceTicksLargeLength: 10,
+            selectionTicksMinutes : 1,
+            showIndicatorLine : true,
+            indicatorLineOptions: {
+                stroke: 'black',
+                strokeWidth: 2
+            },
+            faceTicksLargeLength: 8,
             faceTicksLargeOptions: {
-                strokeWidth: 5
+                strokeWidth: 4
             },
             faceTicksTinyLength: 5,
             faceTicksTinyOptions: {
@@ -58,10 +64,6 @@ $(function () {
             var lastY = 0;
             var lastX = 0;
             var mouseDown = false;
-            var middle = this.circleRadius + TEXT_OFFSET;
-            if (this.options.showFaceCircle) {
-                middle += this.options.faceCircleOptions.strokeWidth;
-            }
 
             // Interaction
             this.actualStartTime = null;
@@ -76,17 +78,23 @@ $(function () {
             this.arcPath = null;
             this.interactionGroups = [];
             this.svg = null;
+            this.svgWidthHeight = 2 * (this.circleRadius + TEXT_OFFSET);
+            if (this.options.showFaceCircle) {
+                this.svgWidthHeight += (2 * this.options.faceCircleOptions.strokeWidth);
+            }
+            this.middle = this.svgWidthHeight / 2;
+            this.indicatorLineGroup = null;
 
             this.element.css('width', this.options.width);
             this.element.css('height', this.options.height);
             this.element.css('position', 'relative');
             this.interactionGroupOptions = this.options.faceOverlayOptions;
-            this.interactionGroupOptions.transform = 'translate(' + middle + ',' + middle + ')';
+            this.interactionGroupOptions.transform = 'translate(' + this.middle + ',' + this.middle + ')';
 
             /**
              * Init elements
              */
-            this._createElements(middle);
+            this._createElements();
 
             /**
              * Mouse Events
@@ -150,7 +158,8 @@ $(function () {
                 }
 
                 // Start an arc path and draw a line
-                _this.actualArcStartPoint = _this._getArcPointFromAbsolutePosition(event.pageX, event.pageY);
+                var angle = _this._getAngleFromAbsolutePosition(event.pageX, event.pageY);
+                _this.actualArcStartPoint = _this._polarToCartesian(_this.circleRadius, angle);
                 _this._drawSvgArc(null);
 
                 // Set start/end time
@@ -190,6 +199,7 @@ $(function () {
             });
 
             this.element.svgContainer.mouseleave(function () {
+                _this._clearIndicatorLine();
                 _this.element.tooltipContainer.hide();
             });
 
@@ -206,8 +216,7 @@ $(function () {
 
                 _this._clearTextSelection();
 
-                var pRel = _this._getRelativePosition(lastX, lastY);
-                var angle = _this._getAngleFromRelativePosition(pRel.x, pRel.y);
+                var angle = _this._getAngleFromAbsolutePosition(lastX, lastY);
                 var time = _this._getTimeFromAngle(angle);
 
                 var off = _this.element.offset();
@@ -216,14 +225,41 @@ $(function () {
 
                 if (mouseDown) {
                     // Continue arc
-                    // In order to have 0 - 360 degree
-                    var angleOffset = angle + 180;
-                    var arcEndPoint = _this._polarToCartesian(0, 0, _this.circleRadius, angleOffset);
+                    // In order to have 0 - 360 degree - Polar to Cartesian
+                    var arcEndPoint = _this._polarToCartesian(_this.circleRadius, angle);
 
                     // Draw the Arc
-                    _this._drawSvgArc(arcEndPoint, angleOffset);
+                    _this._drawSvgArc(arcEndPoint);
                 }
+
+                _this._drawIndicatorLine(angle);
             });
+        },
+
+        _polarToCartesian : function(dist, angle) {
+            // See http://math.stackexchange.com/questions/700237/coordinates-of-sector-of-circle
+            return {
+                x : dist * Math.sin(angle),
+                y : dist * Math.cos(angle) * -1,
+                angle : angle
+            };
+        },
+
+        _drawIndicatorLine : function(angle) {
+            // Draw Indicator Line
+            this._clearIndicatorLine();
+
+            this.indicatorLineGroup = this.svg.group({transform: 'translate(' + this.middle + ',' + this.middle + ')'});
+            this.options.indicatorLineOptions.transform = 'rotate(' + this._radianToDegrees(angle) + ')';
+            this.svg.line(this.indicatorLineGroup, 0, 0, 0, -this.circleRadius, this.options.indicatorLineOptions);
+        },
+
+        _clearIndicatorLine : function() {
+            // Clear Indicator Line
+            if(this.indicatorLineGroup !== null) {
+                this.svg.remove(this.indicatorLineGroup);
+                this.indicatorLineGroup = null;
+            }
         },
 
         _getCssClassValue : function(className, attributeName) {
@@ -231,15 +267,6 @@ $(function () {
             var value = $p.css(attributeName);
             $p.remove();
             return value;
-        },
-
-        _getRelativePosition: function (x, y) {
-            // Get absolute position of svgContainer
-            var offset = this.element.svgContainer.offset();
-            return {
-                x: x - offset.left,
-                y: y - offset.top
-            };
         },
 
         _clearTextSelection : function () {
@@ -256,28 +283,31 @@ $(function () {
         },
 
         _getTimeFromAbsolutePosition: function (x, y) {
-            var pRel = this._getRelativePosition(x, y);
-            var angle = this._getAngleFromRelativePosition(pRel.x, pRel.y);
+            var angle = this._getAngleFromAbsolutePosition(x, y);
             return this._getTimeFromAngle(angle);
         },
 
-        _getArcPointFromAbsolutePosition: function (x, y) {
-            var pRel = this._getRelativePosition(x, y);
-            var angle = this._getAngleFromRelativePosition(pRel.x, pRel.y);
-            var radianAngle = -1 * (angle + 180) * (Math.PI / 180);
+        _getAngleFromAbsolutePosition: function (x, y) {
+            // Transform position vector
+            var offset = this.element.svgContainer.offset();
+            var xRel = x - offset.left - this.middle;
+            var yRel = y - offset.top - this.middle;
 
-            // See http://math.stackexchange.com/questions/700237/coordinates-of-sector-of-circle
-            return {
-                x: this.circleRadius * Math.cos(radianAngle),
-                y: this.circleRadius * Math.sin(radianAngle) * -1,
-                angle: angle
-            };
+            // atan2 is the angle to the positive x-axis + 45° s.t. 12 o'clock is 0°/360°
+            var angle = Math.atan2(yRel, xRel) + Math.PI / 2;
+            if (angle < 0) {
+                angle += 2 * Math.PI;
+            }
+
+            return angle;
         },
 
-        _getAngleFromRelativePosition: function (x2, y2) {
-            // Position to angle
-            var x1y1 = this.svgWidthHeight / 2;
-            return Math.atan2(x1y1 - y2, x1y1 - x2) * 180 / Math.PI;
+        _radianToDegrees: function(angle) {
+            return angle * (180 / Math.PI);
+        },
+
+        _degreesToRadian: function(angle) {
+            return angle * (Math.PI / 180);
         },
 
         _getTooltipText: function (timeObj) {
@@ -313,16 +343,8 @@ $(function () {
             return tooltipText;
         },
 
-        _polarToCartesian: function (centerX, centerY, radius, angleInDegrees) {
-            var angleInRadians = angleInDegrees * Math.PI / 180.0;
-            var x = centerX + radius * Math.cos(angleInRadians);
-            var y = centerY + radius * Math.sin(angleInRadians);
-            return {x: x, y: y};
-        },
-
-        _getTimeFromAngle: function (angleDeg) {
-            var angle = angleDeg + 180;
-            var decimalValue = 3.0 - ( 1.0 / 30.0 ) * ( angle % 360 ) * -1;
+        _getTimeFromAngle: function (angle) {
+            var decimalValue = 6.0 - ( 1.0 / 30.0 ) * ( (this._radianToDegrees(angle) + 180) % 360 ) * -1;
 
             // Normalize from 12 - 11
             if (decimalValue < 0) {
@@ -345,94 +367,58 @@ $(function () {
 
             // Copy objects
             var firstStart = $.extend({},startTime);
-            var firstEnd = $.extend({},endTime);
-
-            if (amEnabled && pmEnabled) {
-                var secondStart = $.extend({},startTime);
-                var secondEnd = $.extend({},endTime);
-
-                /**
-                 * First Interval (startTime is AM)
-                 */
-                // If startTime is 12 we have to subtract 12 to get 0
-                if(startTime.hours === 12) {
-                    firstStart.hours -= 12;
-                }
-
-                // If endTime is PM we have to add 12
-                if(endTime !== null) {
-                    if(endTime.hours <  startTime.hours && startTime.hours < 12) {
-                        firstEnd.hours += 12;
-                    }
-                    intervals.push({startTime : firstStart, endTime: firstEnd});
-                } else {
-                    intervals.push({startTime : firstStart});
-                }
-
-                /**
-                 * First Interval (startTime is PM)
-                 */
-                if(startTime.hours < 12) {
-                    secondStart.hours += 12;
-                }
-
-                // If endTime is AM we have to subtract 12
-                if(endTime !== null) {
-                    if(endTime.hours < 12 && endTime.hours > startTime.hours) {
-                        secondEnd.hours += 12;
-                    }
-
-                    if (endTime.hours <= startTime.hours && endTime.hours === 12) {
-                        secondEnd.hours -= 12;
-                    }
-                    intervals.push({startTime : secondStart, endTime: secondEnd});
-                } else {
-                    intervals.push({startTime : secondStart});
-                }
-
-            } else if (pmEnabled) {
-                if(startTime.hours < 12) {
-                    firstStart.hours += 12;
-                }
-
-                // If endTime is AM and 12 we have to subtract 12
-                if(endTime !== null) {
-                    if(endTime.hours < 12 && endTime.hours > startTime.hours) {
-                        firstEnd.hours += 12;
-                    }
-
-                    if (endTime.hours <= firstStart.hours && endTime.hours === 12) {
-                        firstEnd.hours -= 12;
-                    }
-                    intervals.push({startTime : firstStart, endTime: firstEnd});
-                } else {
-                    intervals.push({startTime : firstStart});
-                }
-
-            } else if(amEnabled) {
-                if(startTime.hours === 12) {
-                    firstStart.hours -= 12;
-                }
-
-                // If endTime is PM we have to add 12
-                if(endTime !== null) {
-                    if(endTime.hours <  startTime.hours && startTime.hours < 12) {
-                        firstEnd.hours += 12;
-                    }
-
-                    intervals.push({startTime : firstStart, endTime: firstEnd});
-                } else {
-                    intervals.push({startTime : firstStart});
-                }
-
-            } else {
-                console.error('Illegal State: AM/PM');
+            if(startTime.hours === 12) {
+                firstStart.hours = 0;
             }
 
+            var firstEnd = $.extend({},endTime);
+            if(endTime !== null && endTime.hours === 12) {
+                firstEnd.hours = 0;
+            }
+
+            if(amEnabled) {
+                if(endTime !== null) {
+                    // Check whether endTime should be PM
+                    if(firstEnd.hours < firstStart.hours || firstEnd.hours === firstStart.hours && firstEnd.minutes < firstStart.minutes) {
+                        firstEnd.hours += 12;
+                    }
+
+                    intervals.push({startTime : firstStart, endTime: firstEnd});
+                } else {
+                    intervals.push({startTime : firstStart});
+                }
+            }
+
+            if(pmEnabled) {
+                // Copy objects
+                firstStart = $.extend({},startTime);
+                if(startTime.hours === 12) {
+                    firstStart.hours = 0;
+                }
+
+                firstEnd = $.extend({},endTime);
+                if(endTime !== null && endTime.hours === 12) {
+                    firstEnd.hours = 0;
+                }
+
+                if(endTime !== null) {
+                      // Check whether endTime should be AM
+                    if(firstEnd.hours < firstStart.hours || firstEnd.hours === firstStart.hours && firstEnd.minutes < firstStart.minutes) {
+                        firstEnd.hours -= 12;
+                    }
+
+                    firstEnd.hours += 12;
+                    firstStart.hours += 12;
+
+                    intervals.push({startTime : firstStart, endTime: firstEnd});
+                } else {
+                    intervals.push({startTime : firstStart});
+                }
+            }
             return intervals;
         },
 
-        _drawSvgArc: function (arcEndPoint, angleOffset) {
+        _drawSvgArc: function (arcEndPoint) {
             // See http://stackoverflow.com/questions/21205652/how-to-draw-a-circle-sector-in-css/21206274#21206274
             // See http://svg.tutorial.aptico.de/start3.php?knr=10&kname=Pfade&uknr=10.8&ukname=A%20und%20a%20-%20Bogenkurven
             if (!this.ctrlHold) {
@@ -460,30 +446,13 @@ $(function () {
                 this.arcPath.move(0, 0).line([[0, 0], [this.actualArcStartPoint.x, this.actualArcStartPoint.y]]).close();
             } else {
                 // Draw additional arc
-                var clockwise;
-                var angleDiff = this.actualArcStartPoint.angle + 180 - angleOffset;
-
-                if (this.actualArcStartPoint.angle >= 90 && this.actualArcStartPoint.angle <= 180) {
-                    // Between 12 and 3
-                    if (angleDiff < 0 && angleDiff > -90  || angleDiff <= 360 && angleDiff > 180) {
-                        clockwise = 0;
-                    } else {
-                        clockwise = 1;
-                    }
-                } else if (this.actualArcStartPoint.angle <= -90 && this.actualArcStartPoint.angle >= -180 || this.actualArcStartPoint.angle >= -90 && this.actualArcStartPoint.angle <= 0) {
-                    // Between 3 and 9
-                    if (angleDiff > -180 && angleDiff < 0) {
-                        clockwise = 0;
-                    } else {
-                        clockwise = 1;
-                    }
-                } else if (this.actualArcStartPoint.angle >= 0 && this.actualArcStartPoint.angle <= 90) {
-                    // Between 9 and 12
-                    if (angleDiff < 0 && angleDiff > -180 || angleDiff > 180) {
-                        clockwise = 0;
-                    } else {
-                        clockwise = 1;
-                    }
+                var aDiff = arcEndPoint.angle - this.actualArcStartPoint.angle;
+                var clockwise = false;
+                if(aDiff > Math.PI) {
+                    clockwise = true;
+                }
+                if(aDiff < 0 && aDiff > Math.PI * -1) {
+                    clockwise = !clockwise;
                 }
 
                 this.arcPath.move(0, 0)
@@ -512,7 +481,6 @@ $(function () {
 
             this._clearArcGroups();
             this.arcPath = null;
-
         },
 
         _timeObjectToString: function (timeObj) {
@@ -521,10 +489,9 @@ $(function () {
 
         /**
          *
-         * @param dist
          * @private
          */
-        _createElements: function (dist) {
+        _createElements: function () {
             var _this = this;
 
             // Time tooltip
@@ -580,15 +547,14 @@ $(function () {
                 $(svg.root()).attr('width', '100%').attr('height', '100%');
                 //$(svg.root()).removeAttr('width').removeAttr('height').attr('viewBox', '0 0 400 400');
                 var radius = _this.circleRadius;
-                var centerXY = _this.svgWidthHeight / 2;
 
                 if (_this.options.showFaceCircle) {
-                    svg.circle(centerXY, centerXY, radius, _this.options.faceCircleOptions);
+                    svg.circle(_this.middle, _this.middle, radius, _this.options.faceCircleOptions);
                 }
 
                 // Draw the face
                 // 12 to 12
-                var svgClockFaceGroup = svg.group({stroke: 'black', transform: 'translate(' + dist + ',' + dist + ')'});
+                var svgClockFaceGroup = svg.group({stroke: 'black', transform: 'translate(' + _this.middle + ',' + _this.middle + ')'});
 
                 // Small ticks
                 var lengthShort = _this.circleRadius - _this.options.faceTicksTinyLength;
@@ -614,15 +580,8 @@ $(function () {
                     svg.text(svgClockFaceGroup, _this.circleRadius + TEXT_OFFSET, 0, "3");
                     $('text', svg.root()).attr('text-anchor', 'middle').addClass('hour-label');
                 }
-
-                // Later for ticks
-                //svg.path(g, path.move(0,0).line([[0,0], [0,radius]]), {transform:'rotate(30)',stroke:'blue'});
             }
 
-            this.svgWidthHeight = 2 * (this.circleRadius + TEXT_OFFSET);
-            if (this.options.showFaceCircle) {
-                this.svgWidthHeight += 2 * this.options.faceCircleOptions.strokeWidth;
-            }
             this.element.svgContainer = $('<div></div>').addClass('jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
             this.element.svgContainer.svg({
                 onLoad: drawClock
