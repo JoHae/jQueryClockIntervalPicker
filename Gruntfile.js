@@ -6,8 +6,9 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         uglify: {
             build: {
-                src: 'src/*.js',
-                dest: 'build/<%= pkg.name %>.min.js'
+                files: {
+                    'build/jquery.clockIntervalPicker.min.js': ['src/jquery.clockIntervalPicker.js']
+                }
             }
         },
         jshint: {
