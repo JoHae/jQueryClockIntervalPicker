@@ -5,9 +5,6 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         uglify: {
-            options: {
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-            },
             build: {
                 src: 'src/*.js',
                 dest: 'build/<%= pkg.name %>.min.js'
@@ -18,6 +15,17 @@ module.exports = function(grunt) {
         },
         csslint: {
             src: 'src/*.css'
+        },
+        cssmin: {
+            target: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/',
+                    src: ['*.css'],
+                    dest: 'build',
+                    ext: '.min.css'
+                }]
+            }
         },
         watch: {
             options: {
@@ -52,9 +60,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-csslint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     // Default task(s).
-    grunt.registerTask('build', ['jshint', 'csslint', 'uglify']);
+    grunt.registerTask('build', ['jshint', 'csslint', 'cssmin', 'uglify']);
     grunt.registerTask('server', ['connect','watch']);
     grunt.registerTask('default', ['build', 'server']);
 };
