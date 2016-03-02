@@ -22,7 +22,7 @@ module.exports = function(grunt) {
         watch: {
             options: {
                 spawn: false,
-                livereload:true
+                livereload: true
             },
             files: ['example/*.html', 'src/*.js', 'src/*.css'],
             tasks:['build']
