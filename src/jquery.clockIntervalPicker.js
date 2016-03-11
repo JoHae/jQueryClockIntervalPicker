@@ -31,7 +31,7 @@ $(function () {
             showToggleLayoutButton: true,
             useTwelveHoursLayout: true,
             showHourLabels : true,
-            selectionTicksMinutes : 10,
+            selectionTicksMinutes : 30,
             showIndicatorLine : true,
             indicatorLineOptions: {
                 stroke: 'black',
@@ -171,6 +171,8 @@ $(function () {
                         _this.interactionGroups.push(_this.svg.group(_this.interactionGroupOptions));
                         _this.svg.circle(_this.interactionGroups[_this.intervalCount], 0, 0, _this.circleRadius);
                         _this.intervalCount++;
+                        _this.startAngles.push(0);
+                        _this.endAngles.push(0);
                         _this.element.trigger("selectionChanged", {
                             intervals: _this.selectedIntervals
                         });
@@ -513,13 +515,19 @@ $(function () {
 
             // We have to use the angles to draw the args
             for(i = 0; i < this.intervalCount; i++) {
-                var startPoint = this._polarToCartesian(this.circleRadius, this.startAngles[i]);
-                startPoint.angle = this.startAngles[i];
-                var endPoint = this._polarToCartesian(this.circleRadius, this.endAngles[i]);
-                endPoint.angle = this.endAngles[i];
-                
-                // Draw the Arc
-                this._drawSvgArc(startPoint, endPoint, this.interactionGroups[i]);
+                if(this.startAngles[i] === 0 && this.endAngles[i] === 0) {
+                    // Everything selected - draw a circle
+                    this.interactionGroups.push(this.svg.group(this.interactionGroupOptions));
+                    this.svg.circle(this.interactionGroups[this.intervalCount], 0, 0, this.circleRadius);
+                } else {
+                    var startPoint = this._polarToCartesian(this.circleRadius, this.startAngles[i]);
+                    var endPoint = this._polarToCartesian(this.circleRadius, this.endAngles[i]);
+
+                    // Draw the Arc
+                    startPoint.angle = this.startAngles[i];
+                    endPoint.angle = this.endAngles[i];
+                    this._drawSvgArc(startPoint, endPoint, this.interactionGroups[i]);
+                }
             }
         },
 
