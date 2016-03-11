@@ -38,15 +38,15 @@ $( "#time-picker" ).clockTimeIntervalPicker({useTwelveHoursLayout : false});
 ```
 
 ### List of available Options
-| Option | Description | Default |
+| Option | Values |  Default | Description |
+| --- | --- | --- | --- |
+| `multiSelection` | true / false | |
+| `enableAmPmButtons` | true / false | |
+| `useTwelveHoursLayout` | true / false | |
+| `selectionTicksMinutes` | Integer (> 0) | |
+| `showToggleLayoutButton` | true / false | |
 | --- | --- | --- |
-| `multiSelection` | | |
-| `enableAmPmButtons` |  | |
-| `useTwelveHoursLayout` |  | |
-| `selectionTicksMinutes` |  | |
-| `showToggleLayoutButton` |  | |
-| --- | --- | --- |
-| `showHourLabels` |  | |
+| `showHourLabels` | true / false | |
 | `showIndicatorLine` |  | |
 | `indicatorLineOptions` |  | |
 | `faceTicksLargeLength` |  | |
