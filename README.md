@@ -84,9 +84,9 @@ Submit an issue above or here:
 
 ##Work in Progress
 - [x] Combine width / height of div and radius
-- [ ] 0 - 23 h Clock Layout
-- [ ] Costumizable ticks in minutes
-- [ ] Text labels for hours
+- [x] 0 - 23 h Clock Layout
+- [x] Costumizable ticks in minutes
+- [x] Text labels for hours
 - [ ] Add intervals programmatically
 - [ ] Drag and Drop existing selection
 
