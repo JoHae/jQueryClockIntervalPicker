@@ -30,10 +30,10 @@ $( "#time-picker" ).clockTimeIntervalPicker()
         // Selection changed Event - Returns all intervals
     });
     
-    // Add responsive behaviour
-    $( window ).resize(function() {
-        $( "#time-picker" ).clockTimeIntervalPicker('refresh');
-    });
+// Add responsive behaviour
+$( window ).resize(function() {
+    $( "#time-picker" ).clockTimeIntervalPicker('refresh');
+});
 ```
 
 ##Options
