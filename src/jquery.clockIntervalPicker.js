@@ -9,7 +9,6 @@
  */
 $(function () {
     // Static variables shared across all instances
-    var TEXT_OFFSET = 100;
     var TOOLTIP_MARGIN = 15;
     var AM_LABEL = 'AM';
     var PM_LABEL = 'PM';
@@ -78,18 +77,27 @@ $(function () {
             this.amEnabled = true;
             this.pmEnabled = true;
 
-            // Drawing
-            // Calculate circle radius according to width / height / label font-size
-            this.labelFontSize = parseInt(this._getCssClassValue('hour-label', 'font-size'));
-            this.circleRadius = Math.min(this.options.height, this.options.width) / 2 - 2 * this.labelFontSize;
+            // Create Basic UI
+            this._createUIButtons();
+
+            // Drawing (SVG)
+            var availableSVGWidth = this.options.width;
+            var availableSVGHeight = this.options.height - $('.jh-button-container').outerHeight();
+
+            this.svgWidthHeight = Math.min(availableSVGWidth, availableSVGHeight);
+            this.circleRadius = this.svgWidthHeight / 2;
+            if (this.options.showFaceCircle) {
+                this.circleRadius -= (2 * this.options.faceCircleOptions.strokeWidth);
+            }
+            if(this.options.showHourLabels) {
+                this.hourLabelFontSize = parseInt(this._getCssClassValue('hour-label', 'font-size'));
+                this.circleRadius -= 2 * this.hourLabelFontSize;
+            }
+
             this.actualArcStartPoint = {};
             this.arcPath = null;
             this.interactionGroups = [];
             this.svg = null;
-            this.svgWidthHeight = 2 * (this.circleRadius + TEXT_OFFSET);
-            if (this.options.showFaceCircle) {
-                this.svgWidthHeight += (2 * this.options.faceCircleOptions.strokeWidth);
-            }
             this.middle = this.svgWidthHeight / 2;
             this.indicatorLineGroup = null;
 
@@ -540,11 +548,7 @@ $(function () {
             return ( hours < 10 ? "0" + hours : hours ) + ":" + (timeObj.minutes < 10 ? "0" + timeObj.minutes : timeObj.minutes);
         },
 
-        /**
-         *
-         * @private
-         */
-        _createElements: function () {
+        _createUIButtons: function () {
             var _this = this;
 
             // Time tooltip
@@ -594,7 +598,14 @@ $(function () {
                     });
                 }
             }
+        },
 
+        /**
+         *
+         * @private
+         */
+        _createElements: function () {
+            var _this = this;
             function drawClock(svg) {
                 _this.svg = svg;
                 $(svg.root()).attr('width', '100%').attr('height', '100%').attr('cursor', 'crosshair');
@@ -628,10 +639,9 @@ $(function () {
                 // Text
                 if (_this.options.showHourLabels) {
                     svg.text(svgClockFaceGroup, 0, -_this.circleRadius - 12, "12");
-                    svg.text(svgClockFaceGroup, 0, _this.circleRadius + _this.labelFontSize + 12, "6");
-
-                    svg.text(svgClockFaceGroup, -_this.circleRadius - _this.labelFontSize, _this.labelFontSize/4, "9");
-                    svg.text(svgClockFaceGroup, _this.circleRadius + _this.labelFontSize, _this.labelFontSize/4, "3");
+                    svg.text(svgClockFaceGroup, 0, _this.circleRadius + _this.hourLabelFontSize + 12, "6");
+                    svg.text(svgClockFaceGroup, -_this.circleRadius - _this.hourLabelFontSize, _this.hourLabelFontSize/4, "9");
+                    svg.text(svgClockFaceGroup, _this.circleRadius + _this.hourLabelFontSize, _this.hourLabelFontSize/4, "3");
                     $('text', svg.root()).attr('text-anchor', 'middle').addClass('hour-label');
                 }
             }
