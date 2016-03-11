@@ -15,7 +15,7 @@ visit the [Project Page](http://johae.github.io/jQueryClockIntervalPicker) or se
 
 ##Usage - Events
 ```html
-<div id="time-picker"></div>
+<div id="time-picker" style="position: relative; width: 100%; height: 100%"></div>
 ```
 ...
 ```javascript
@@ -34,19 +34,26 @@ $( "#time-picker" ).clockTimeIntervalPicker()
 ##Options
 You can pass an options object on initialization:
 ```javascript
-$( "#time-picker" ).clockTimeIntervalPicker({circleRadius : 100});
+$( "#time-picker" ).clockTimeIntervalPicker({useTwelveHoursLayout : false});
 ```
 
 ### List of available Options
 | Option | Description | Default |
 | --- | --- | --- |
-| `circleRadius` |  | |
 | `multiSelection` | | |
 | `enableAmPmButtons` |  | |
+| `useTwelveHoursLayout` |  | |
+| `selectionTicksMinutes` |  | |
+| `showToggleLayoutButton` |  | |
+| --- | --- | --- |
+| `showHourLabels` |  | |
+| `showIndicatorLine` |  | |
+| `indicatorLineOptions` |  | |
 | `faceTicksLargeLength` |  | |
 | `faceTicksLargeOptions` | | |
 | `faceTicksTinyLength` | | |
 | `faceTicksTinyOptions` | | |
+| `showFaceCircle` |  | |
 | `faceCircleOptions` | | |
 | `faceOverlayOptions` | | |
 
