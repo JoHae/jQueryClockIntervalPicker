@@ -40,21 +40,21 @@ $( "#time-picker" ).clockTimeIntervalPicker({useTwelveHoursLayout : false});
 ### List of available Options
 | Option | Values |  Default | Description |
 | --- | --- | --- | --- |
-| Interactions |
-| `multiSelection` | true / false | |
-| `enableAmPmButtons` | true / false | |
-| `useTwelveHoursLayout` | true / false | |
+| **Interactions** |
+| `multiSelection` | `true` / `false` | |
+| `enableAmPmButtons` | `true` / `false` | |
+| `useTwelveHoursLayout` | `true` / `false` | |
 | `selectionTicksMinutes` | Integer (> 0) | |
-| `showToggleLayoutButton` | true / false | |
-| Design |
-| `showHourLabels` | true / false | |
-| `showIndicatorLine` |  | |
+| `showToggleLayoutButton` | `true` / `false` | |
+| **Design** |
+| `showHourLabels` | `true` / `false` | |
+| `showIndicatorLine` | `true` / `false` | |
 | `indicatorLineOptions` |  | |
 | `faceTicksLargeLength` |  | |
 | `faceTicksLargeOptions` | | |
 | `faceTicksTinyLength` | | |
 | `faceTicksTinyOptions` | | |
-| `showFaceCircle` |  | |
+| `showFaceCircle` | `true` / `false` | |
 | `faceCircleOptions` | | |
 | `faceOverlayOptions` | | |
 
