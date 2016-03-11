@@ -69,6 +69,7 @@ Submit an issue above or here:
 - [ ] Costumizable ticks in minutes
 - [ ] Text labels for hours
 - [ ] Add intervals programmatically
+- [ ] Drag and Drop existing selection
 
 ##License
 MIT License (MIT)
