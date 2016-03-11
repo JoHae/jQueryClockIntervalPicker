@@ -16,6 +16,14 @@
     <script src="/src/jquery.clockIntervalPicker.js"></script>
     <!-- endinjector -->
 
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+        }
+    </style>
+
 	<script>
 		$( document ).ready( function () {
 			var picker = $( "#time-picker" ).clockTimeIntervalPicker();
@@ -31,10 +39,14 @@
                 console.log("selectionChanged");
                 console.log(data.intervals);
             });
+
+            $( window ).resize(function() {
+                picker.clockTimeIntervalPicker('refresh');
+            });
 		} );
 	</script>
 </head>
 <body>
-<div id="time-picker"></div>
+<div id="time-picker" style="position: relative; width: 100%; height: 100%"></div>
 </body>
 </html>

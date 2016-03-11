@@ -25,8 +25,6 @@ $(function () {
 
     $.widget('jh.clockTimeIntervalPicker', {
         options: {
-            width: 500,
-            height: 500,
             multiSelection: true,
             showFaceCircle: false,
             enableAmPmButtons: true,
@@ -64,12 +62,6 @@ $(function () {
         },
 
         _create: function () {
-            // Private vars
-            var _this = this;
-            var lastY = 0;
-            var lastX = 0;
-            var mouseDown = false;
-
             // Interaction
             this.actualStartTime = null;
             this.selectedIntervals = [];
@@ -77,6 +69,8 @@ $(function () {
             this.ctrlHold = false;
             this.amEnabled = true;
             this.pmEnabled = true;
+            this.startAngles = [];
+            this.endAngles = [];
 
             // Layout
             this.twelveHoursLayout = this.options.useTwelveHoursLayout;
@@ -85,32 +79,16 @@ $(function () {
             this.buttonContainerHeight = 0;
             this._createBasicUIElement();
 
-            // Drawing (SVG)
-            var availableSVGWidth = this.options.width;
-            var availableSVGHeight = this.options.height - this.buttonContainerHeight;
-
-            this.svgWidthHeight = Math.min(availableSVGWidth, availableSVGHeight);
-            this.circleRadius = this.svgWidthHeight / 2;
-            if (this.options.showFaceCircle) {
-                this.circleRadius -= (2 * this.options.faceCircleOptions.strokeWidth);
-            }
-            if(this.options.showHourLabels) {
-                this.hourLabelFontSize = parseInt(this._getCssClassValue('hour-label', 'font-size'));
-                this.circleRadius -= 2 * this.hourLabelFontSize;
-            }
-
+            // Drawing based on interaction
+            this.interactionGroupOptions = this.options.faceOverlayOptions;
             this.actualArcStartPoint = {};
             this.arcPath = null;
             this.interactionGroups = [];
             this.svg = null;
-            this.middle = this.svgWidthHeight / 2;
             this.indicatorLineGroup = null;
 
-            this.element.css('width', this.options.width);
-            this.element.css('height', this.options.height);
-            this.element.css('position', 'relative');
-            this.interactionGroupOptions = this.options.faceOverlayOptions;
-            this.interactionGroupOptions.transform = 'translate(' + this.middle + ',' + this.middle + ')';
+            // Drawing (SVG)
+            this._initSVGSizeVariables();
 
             // Init ticks for minutes w.r.t to statrt angle of given minute
             // NOTE: We will start at 00:00 / 12:00
@@ -122,11 +100,37 @@ $(function () {
 
             // Init SVG elements
             this.element.svgContainer = $('<div></div>').addClass('jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
+            //this.element.svgContainer = $('<div></div>').addClass('jh-svg-container').width('100%').height('100%').attr('oncontextmenu', "return false;").appendTo(this.element);
             this._createSVGElements();
 
-            /**
-             * Mouse Events
-             */
+            this._initMouseEventHandlers();
+        },
+
+        _initSVGSizeVariables: function() {
+            this.availableWidth = this.element.width();
+            this.availableHeight = this.element.height();
+            this.availableSVGWidth = this.availableWidth;
+            this.availableSVGHeight = this.availableHeight - this.buttonContainerHeight;
+
+            this.svgWidthHeight = Math.min(this.availableSVGWidth, this.availableSVGHeight);
+            this.circleRadius = this.svgWidthHeight / 2;
+            if (this.options.showFaceCircle) {
+                this.circleRadius -= (2 * this.options.faceCircleOptions.strokeWidth);
+            }
+            if(this.options.showHourLabels) {
+                this.hourLabelFontSize = parseInt(this._getCssClassValue('hour-label', 'font-size'));
+                this.circleRadius -= 2 * this.hourLabelFontSize;
+            }
+            this.middle = this.svgWidthHeight / 2;
+            this.interactionGroupOptions.transform = 'translate(' + this.middle + ',' + this.middle + ')';
+        },
+
+        _initMouseEventHandlers : function() {
+            var _this = this;
+            var lastY = 0;
+            var lastX = 0;
+            var mouseDown = false;
+
             this.element.svgContainer.mousedown(function (event) {
                 _this._clearTextSelection();
 
@@ -175,7 +179,7 @@ $(function () {
                 }
 
                 //if (mouseDown) {
-                    // Mouse was not released inside clock
+                // Mouse was not released inside clock
                 //}
 
                 // Check ctrl hold for append mode
@@ -188,7 +192,7 @@ $(function () {
                 _this.actualStartTime = _this._getTickTime(time.hours, time.minutes);
                 var tickAngle = _this._degreesToRadian(_this._getAngleFromTime(_this.actualStartTime.hours, _this.actualStartTime.minutes));
                 _this.actualArcStartPoint = _this._polarToCartesian(_this.circleRadius, tickAngle);
-                _this._drawSvgArc(null);
+                _this._createSvgArc(_this.actualArcStartPoint);
 
                 mouseDown = true;
                 _this.element.trigger("selectionStarted", {
@@ -204,7 +208,7 @@ $(function () {
                 _this._clearTextSelection();
 
                 //if (!mouseDown) {
-                    // Mouse was not pressed down inside clock
+                // Mouse was not pressed down inside clock
                 //}
 
                 // End arc
@@ -216,8 +220,11 @@ $(function () {
 
                 var intervals = _this._getIntervalsFromTimeObj(_this.actualStartTime, actualEndTime, _this.amEnabled, _this.pmEnabled);
                 _this.selectedIntervals = _this.selectedIntervals.concat(intervals);
-                _this.actualStartTime = null;
 
+                _this.startAngles.push(_this._degreesToRadian(_this._getAngleFromTime(_this.actualStartTime.hours, _this.actualStartTime.minutes)));
+                _this.endAngles.push(_this._degreesToRadian(_this._getAngleFromTime(actualEndTime.hours, actualEndTime.minutes)));
+
+                _this.actualStartTime = null;
                 _this.element.trigger("selectionEnded", {
                     intervals : intervals
                 });
@@ -256,7 +263,7 @@ $(function () {
                     var arcEndPoint = _this._polarToCartesian(_this.circleRadius, tickAngle);
 
                     // Draw the Arc
-                    _this._drawSvgArc(arcEndPoint);
+                    _this._createSvgArc(_this.actualArcStartPoint, arcEndPoint);
                 }
 
                 _this._drawIndicatorLine(tickAngle);
@@ -497,7 +504,26 @@ $(function () {
             return intervals;
         },
 
-        _drawSvgArc: function (arcEndPoint) {
+        _redrawSvgArcs: function () {
+            // Reinit new interaction groups
+            this.interactionGroups = [];
+            for(var i = 0; i < this.intervalCount; i++) {
+                this.interactionGroups.push(this.svg.group(this.interactionGroupOptions));
+            }
+
+            // We have to use the angles to draw the args
+            for(i = 0; i < this.intervalCount; i++) {
+                var startPoint = this._polarToCartesian(this.circleRadius, this.startAngles[i]);
+                startPoint.angle = this.startAngles[i];
+                var endPoint = this._polarToCartesian(this.circleRadius, this.endAngles[i]);
+                endPoint.angle = this.endAngles[i];
+                
+                // Draw the Arc
+                this._drawSvgArc(startPoint, endPoint, this.interactionGroups[i]);
+            }
+        },
+
+        _createSvgArc: function (arcStartPoint, arcEndPoint) {
             // See http://stackoverflow.com/questions/21205652/how-to-draw-a-circle-sector-in-css/21206274#21206274
             // See http://svg.tutorial.aptico.de/start3.php?knr=10&kname=Pfade&uknr=10.8&ukname=A%20und%20a%20-%20Bogenkurven
             if (!this.ctrlHold) {
@@ -505,7 +531,7 @@ $(function () {
                 this._clearArcGroups();
             } else {
                 // Clear only last arc if there is one
-                if (this.interactionGroups.length >= this.intervalCount) {
+                if (this.interactionGroups.length > this.intervalCount) {
                     for (var i = this.intervalCount; i < this.interactionGroups.length; i++) {
                         this.svg.remove(this.interactionGroups[i]);
                         this.interactionGroups.pop();
@@ -516,16 +542,18 @@ $(function () {
                 console.error("length: " + this.interactionGroups.length);
                 console.error("Count:  " + this.intervalCount);
             }
-
             this.interactionGroups.push(this.svg.group(this.interactionGroupOptions));
+            this._drawSvgArc(arcStartPoint, arcEndPoint, this.interactionGroups[this.intervalCount]);
+        },
 
+        _drawSvgArc: function(arcStartPoint, arcEndPoint, parent) {
             this.arcPath = this.svg.createPath();
-            if (arcEndPoint === null) {
+            if (typeof arcEndPoint === 'undefined' || arcEndPoint === null) {
                 // Just draw a line
-                this.arcPath.move(0, 0).line([[0, 0], [this.actualArcStartPoint.x, this.actualArcStartPoint.y]]).close();
+                this.arcPath.move(0, 0).line([[0, 0], [arcStartPoint.x, arcStartPoint.y]]).close();
             } else {
                 // Draw additional arc
-                var aDiff = arcEndPoint.angle - this.actualArcStartPoint.angle;
+                var aDiff = arcEndPoint.angle - arcStartPoint.angle;
                 var clockwise = false;
                 if(aDiff > Math.PI) {
                     clockwise = true;
@@ -535,12 +563,12 @@ $(function () {
                 }
 
                 this.arcPath.move(0, 0)
-                    .line([[0, 0], [this.actualArcStartPoint.x, this.actualArcStartPoint.y]])
+                    .line([[0, 0], [arcStartPoint.x, arcStartPoint.y]])
                     .arc(this.circleRadius, this.circleRadius, 1, clockwise, 1, arcEndPoint.x, arcEndPoint.y)
                     .line([[arcEndPoint.x, arcEndPoint.y], [0, 0]])
                     .close();
             }
-            this.svg.path(this.interactionGroups[this.intervalCount], this.arcPath);
+            this.svg.path(parent, this.arcPath);
         },
 
         _clearArcGroups: function () {
@@ -560,6 +588,12 @@ $(function () {
 
             this._clearArcGroups();
             this.arcPath = null;
+        },
+
+        _clearSVGElements: function() {
+            this.element.svgContainer.empty();
+            this.element.svgContainer.removeClass('hasSVG');
+            this.interactionGroups = [];
         },
 
         _timeObjectToString: function (timeObj) {
@@ -621,6 +655,7 @@ $(function () {
                         }
                     }
                     _this._clearSVGElements();
+                    _this._clearSelection();
                     _this._createSVGElements();
                 });
             }
@@ -654,8 +689,11 @@ $(function () {
             var _this = this;
             function drawClock(svg) {
                 _this.svg = svg;
-                $(svg.root()).attr('width', '100%').attr('height', '100%').attr('cursor', 'crosshair');
-                //$(svg.root()).removeAttr('width').removeAttr('height').attr('viewBox', '0 0 400 400');
+                $(svg.root()).attr('width', '100%').attr('height', '100%');
+
+                // See: http://stackoverflow.com/questions/12361971/does-the-attr-in-jquery-force-lowercase
+                document.getElementsByTagName("svg")[0].setAttribute('viewBox', '0 0 ' + _this.svgWidthHeight + ' ' + _this.svgWidthHeight);
+
                 var radius = _this.circleRadius;
 
                 if (_this.options.showFaceCircle) {
@@ -713,11 +751,6 @@ $(function () {
             });
         },
 
-        _clearSVGElements: function() {
-            this.element.svgContainer.empty();
-            this.element.svgContainer.removeClass('hasSVG');
-        },
-
         _destroy: function () {
 
         },
@@ -728,6 +761,14 @@ $(function () {
             //    this._resizeBoxForMaxItemsOf(value);
             //}
             $.Widget.prototype._setOption.apply(this, arguments);
+        },
+
+        refresh: function() {
+            this._clearSVGElements();
+            this._initSVGSizeVariables();
+            this.element.svgContainer.width(this.svgWidthHeight).height(this.svgWidthHeight);
+            this._createSVGElements();
+            this._redrawSvgArcs();
         }
     });
 });
