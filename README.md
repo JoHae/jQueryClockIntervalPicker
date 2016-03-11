@@ -64,7 +64,7 @@ Submit an issue above or here:
 <https://github.com/JoHae/jQueryClockIntervalPicker/issues>
 
 ##Work in Progress
-- [ ] Combine width / height of div and radius
+- [x] Combine width / height of div and radius
 - [ ] 0 - 23 h Clock Layout
 - [ ] Costumizable ticks in minutes
 - [ ] Text labels for hours
