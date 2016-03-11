@@ -29,6 +29,11 @@ $( "#time-picker" ).clockTimeIntervalPicker()
     .on( "selectionChanged", function( event, data ) {
         // Selection changed Event - Returns all intervals
     });
+    
+    // Add responsive behaviour
+    $( window ).resize(function() {
+        $( "#time-picker" ).clockTimeIntervalPicker('refresh');
+    });
 ```
 
 ##Options
