@@ -31,7 +31,7 @@ $(function () {
             showFaceCircle: false,
             enableAmPmButtons: true,
             showToggleLayoutButton: true,
-            useTwelveHoursLayout: false,
+            useTwelveHoursLayout: true,
             showHourLabels : true,
             selectionTicksMinutes : 10,
             showIndicatorLine : true,
