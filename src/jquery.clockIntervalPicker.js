@@ -33,7 +33,7 @@ $(function () {
             enableAmPmButtons: true,
             showToggleLayoutButton: false,
             showHourLabels : true,
-            selectionTicksMinutes : 120,
+            selectionTicksMinutes : 10,
             showIndicatorLine : true,
             indicatorLineOptions: {
                 stroke: 'black',
@@ -202,7 +202,7 @@ $(function () {
                 mouseDown = false;
 
                 var intervals = _this._getIntervalsFromTimeObj(_this.actualStartTime, actualEndTime, _this.amEnabled, _this.pmEnabled);
-                _this.selectedIntervals = _this.selectedIntervals.concat(intervals)
+                _this.selectedIntervals = _this.selectedIntervals.concat(intervals);
                 _this.actualStartTime = null;
 
                 _this.element.trigger("selectionEnded", {
