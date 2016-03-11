@@ -58,6 +58,17 @@ $( "#time-picker" ).clockTimeIntervalPicker({useTwelveHoursLayout : false});
 | `faceCircleOptions` | | |
 | `faceOverlayOptions` | | |
 
+Options with the suffix *Options* refer to a svg style object. See [Reference](https://www.w3.org/TR/SVG/styling.html) for possible options. Here is an example:
+```javascript
+faceCircleOptions: {
+    fill: 'black',
+    fillOpacity: 0.0,
+    stroke: 'black',
+    strokeOpacity: 0.0,
+    strokeWidth: 2
+}
+```
+
 ##Requirements
 - [jQuery 2.2.0](https://jquery.com)
 - [jQuery UI 1.11.4](https://jquery.com)
