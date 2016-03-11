@@ -593,6 +593,8 @@ $(function () {
             this.actualArcStartPoint = {};
             this.intervalCount = 0;
             this.selectedIntervals = [];
+            this.startAngles = [];
+            this.endAngles = [];
 
             this._clearArcGroups();
             this.arcPath = null;
