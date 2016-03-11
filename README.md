@@ -1,7 +1,7 @@
 # jQueryClockIntervalPicker
 
 ##What ?
-A jQuery plugin for interactive time-interval selection based on a clock metaphor.
+A responsive jQuery plugin for interactive time-interval selection based on a clock metaphor.
 
 ##Example
 visit the [Project Page](http://johae.github.io/jQueryClockIntervalPicker) or see example folder of the repository .
