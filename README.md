@@ -41,22 +41,22 @@ $( "#time-picker" ).clockTimeIntervalPicker({useTwelveHoursLayout : false});
 | Option | Values |  Default | Description |
 | --- | --- | --- | --- |
 | **Interactions** |
-| `multiSelection` | `true` / `false` | |
-| `enableAmPmButtons` | `true` / `false` | |
-| `useTwelveHoursLayout` | `true` / `false` | |
-| `selectionTicksMinutes` | Integer (> 0) | |
-| `showToggleLayoutButton` | `true` / `false` | |
+| `multiSelection` | `true` / `false` | `true` |
+| `enableAmPmButtons` | `true` / `false` | `true` |
+| `useTwelveHoursLayout` | `true` / `false` | `true` |
+| `selectionTicksMinutes` | Integer (> 0) | 30 |
+| `showToggleLayoutButton` | `true` / `false` | `true` |
 | **Design** |
-| `showHourLabels` | `true` / `false` | |
-| `showIndicatorLine` | `true` / `false` | |
-| `indicatorLineOptions` |  | |
-| `faceTicksLargeLength` |  | |
-| `faceTicksLargeOptions` | | |
-| `faceTicksTinyLength` | | |
-| `faceTicksTinyOptions` | | |
-| `showFaceCircle` | `true` / `false` | |
-| `faceCircleOptions` | | |
-| `faceOverlayOptions` | | |
+| `showHourLabels` | `true` / `false` | `true` |
+| `showIndicatorLine` | `true` / `false` | `true` |
+| `indicatorLineOptions` | svg options | | see below
+| `faceTicksLargeLength` | Integer (> 0) | |
+| `faceTicksLargeOptions` | svg options | | see below
+| `faceTicksTinyLength` | Integer (> 0) | |
+| `faceTicksTinyOptions` | svg options  | | see below
+| `showFaceCircle` | `true` / `false` | `false` |
+| `faceCircleOptions` | svg options | | see below
+| `faceOverlayOptions` | svg options | | see below
 
 Options with the suffix *Options* refer to a svg style object. See [Reference](https://www.w3.org/TR/SVG/styling.html) for possible options. Here is an example:
 ```javascript
