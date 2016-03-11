@@ -30,7 +30,8 @@ $(function () {
             multiSelection: true,
             showFaceCircle: false,
             enableAmPmButtons: true,
-            showToggleLayoutButton: false,
+            showToggleLayoutButton: true,
+            useTwelveHoursLayout: false,
             showHourLabels : true,
             selectionTicksMinutes : 10,
             showIndicatorLine : true,
@@ -77,12 +78,16 @@ $(function () {
             this.amEnabled = true;
             this.pmEnabled = true;
 
+            // Layout
+            this.twelveHoursLayout = this.options.useTwelveHoursLayout;
+
             // Create Basic UI
-            this._createUIButtons();
+            this.buttonContainerHeight = 0;
+            this._createBasicUIElement();
 
             // Drawing (SVG)
             var availableSVGWidth = this.options.width;
-            var availableSVGHeight = this.options.height - $('.jh-button-container').outerHeight();
+            var availableSVGHeight = this.options.height - this.buttonContainerHeight;
 
             this.svgWidthHeight = Math.min(availableSVGWidth, availableSVGHeight);
             this.circleRadius = this.svgWidthHeight / 2;
@@ -111,12 +116,13 @@ $(function () {
             // NOTE: We will start at 00:00 / 12:00
             this.ticksMinutes = [];
             var numTicks = MINUTES_PER_DAY / this.options.selectionTicksMinutes;
-            for(var i = 0; i < numTicks; i++) {
+            for(var i = 0; i <= numTicks; i++) {
                 this.ticksMinutes.push(i * this.options.selectionTicksMinutes);
             }
 
-            // Init elements
-            this._createElements();
+            // Init SVG elements
+            this.element.svgContainer = $('<div></div>').addClass('jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
+            this._createSVGElements();
 
             /**
              * Mouse Events
@@ -165,7 +171,6 @@ $(function () {
                             intervals: _this.selectedIntervals
                         });
                     }
-
                     return;
                 }
 
@@ -242,7 +247,6 @@ $(function () {
                 // Find the correct angle according to the ticks
                 var tickTime = _this._getTickTime(time.hours, time.minutes);
                 var tickAngle = _this._degreesToRadian(_this._getAngleFromTime(tickTime.hours, tickTime.minutes));
-
                 var off = _this.element.offset();
                 _this.element.tooltipContainer.css('left', lastX - off.left + TOOLTIP_MARGIN).css('top', lastY - off.top).text(_this._getTooltipText(tickTime));
 
@@ -281,8 +285,13 @@ $(function () {
                 }
             }
 
+            var tickHours = parseInt(tickTotalMinutes / MINUTES_PER_HOUR);
+            if(tickHours === 24) {
+                tickHours = 0;
+            }
+
             return {
-                hours: parseInt(tickTotalMinutes / MINUTES_PER_HOUR),
+                hours: tickHours,
                 minutes: tickTotalMinutes % MINUTES_PER_HOUR
             };
         },
@@ -365,12 +374,14 @@ $(function () {
             var tooltipText = "";
             var amPmLabel = "";
 
-            if (this.amEnabled && this.pmEnabled) {
-                amPmLabel = AM_PM_LABEL;
-            } else if (this.amEnabled) {
-                amPmLabel = AM_LABEL;
-            } else if (this.pmEnabled) {
-                amPmLabel = PM_LABEL;
+            if(this.twelveHoursLayout) {
+                if (this.amEnabled && this.pmEnabled) {
+                    amPmLabel = AM_PM_LABEL;
+                } else if (this.amEnabled) {
+                    amPmLabel = AM_LABEL;
+                } else if (this.pmEnabled) {
+                    amPmLabel = PM_LABEL;
+                }
             }
 
             if (this.actualStartTime !== null) {
@@ -395,7 +406,12 @@ $(function () {
         },
 
         _getTimeFromAngle: function (angle) {
-            var decimalValue = 6.0 - ( 1.0 / 30.0 ) * ( (this._radianToDegrees(angle) + DEGREES_CIRCLE/2) % DEGREES_CIRCLE ) * -1;
+            var decimalValue;
+            if(this.twelveHoursLayout) {
+                decimalValue = 6.0 - ( 1.0 / 30.0 ) * ( (this._radianToDegrees(angle) + DEGREES_CIRCLE/2) % DEGREES_CIRCLE ) * -1;
+            } else {
+                decimalValue = 12.0 - ( 1.0 / 15.0 ) * ( (this._radianToDegrees(angle)) % DEGREES_CIRCLE ) * -1;
+            }
 
             // Normalize from 12 - 11
             if (decimalValue < 0) {
@@ -404,18 +420,24 @@ $(function () {
             if (decimalValue > 12) {
                 decimalValue -= 12.0;
             }
+
             var hours = parseInt(decimalValue);
-            if (hours === 12) {
+            if (hours === 12 && (this.twelveHoursLayout || angle === 0)) {
                 hours = 0;
             }
+
             var minutes = parseInt(decimalValue * MINUTES_PER_HOUR) % MINUTES_PER_HOUR;
 
             return {hours: hours, minutes: minutes};
         },
 
         _getAngleFromTime: function(hours, minutes) {
-            var angle = hours * DEGREES_PER_12_HOUR;
-            angle += minutes * DEGREES_PER_12_MINUTE;
+            var angle;
+            if(this.twelveHoursLayout) {
+                angle = hours * DEGREES_PER_12_HOUR + minutes * DEGREES_PER_12_MINUTE;
+            } else {
+                angle = hours * DEGREES_PER_24_HOUR + minutes * DEGREES_PER_24_MINUTE;
+            }
             return angle;
         },
 
@@ -542,69 +564,93 @@ $(function () {
 
         _timeObjectToString: function (timeObj) {
             var hours = timeObj.hours;
-            if(hours === 0) {
+            if(hours === 0 && this.twelveHoursLayout) {
                 hours = 12;
             }
             return ( hours < 10 ? "0" + hours : hours ) + ":" + (timeObj.minutes < 10 ? "0" + timeObj.minutes : timeObj.minutes);
         },
 
-        _createUIButtons: function () {
+        _createBasicUIElement: function () {
             var _this = this;
 
             // Time tooltip
             this.element.tooltipContainer = $('<div></div>').addClass('jh-tooltip-container').hide().appendTo(this.element);
+
+            if (!this.options.showToggleLayoutButton && !this.options.enableAmPmButtons) {
+                return;
+            }
+
+            var buttonContainer = $('<div></div>').addClass('jh-button-container').appendTo(this.element);
+
+            // AM/PM Buttons
             var amPmButtonContainer;
+            if (this.options.enableAmPmButtons) {
+                amPmButtonContainer = $('<div></div>').addClass('jh-am-pm-button-container').appendTo(buttonContainer);
+                $(' <input type="radio" id="jh-am-button" name="radio" value="' + AM_LABEL + '"><label for="jh-am-button">' + AM_LABEL + '</label>').appendTo(amPmButtonContainer);
+                $(' <input type="radio" id="jh-pm-button" name="radio" value="' + PM_LABEL + '"><label for="jh-pm-button">' + PM_LABEL + '</label>').appendTo(amPmButtonContainer);
+                $(' <input type="radio" id="jh-both-button" name="radio"  value="' + AM_PM_LABEL + '" checked="checked"><label for="jh-both-button">' + AM_PM_LABEL + '</label>').appendTo(amPmButtonContainer);
 
-            if (this.options.showToggleLayoutButton || this.options.enableAmPmButtons) {
-                var buttonContainer = $('<div></div>').addClass('jh-button-container').appendTo(this.element);
+                amPmButtonContainer.buttonset();
 
-                if (this.options.showToggleLayoutButton) {
-                    var toggleButtonContainer = $('<div></div>').addClass('jh-toggle-button-container').appendTo(buttonContainer);
-                    $(' <input type="checkbox" id="clockLayout"><label for="clockLayout">24h</label> ').appendTo(toggleButtonContainer);
-                    $('#clockLayout').button().on('change', function () {
-                        var val = $(this).is(':checked');
-                        _this.showTwentyFourClockLayout = val;
-                        if (typeof amPmButtonContainer !== 'undefined') {
-                            if (val) {
-                                amPmButtonContainer.hide();
-                            } else {
-                                amPmButtonContainer.show();
-                            }
+                $('input:radio[name=radio]').change(function () {
+                    _this.amEnabled = false;
+                    _this.pmEnabled = false;
+                    if (this.value === AM_LABEL) {
+                        _this.amEnabled = true;
+                    } else if (this.value === PM_LABEL) {
+                        _this.pmEnabled = true;
+                    } else if (this.value === AM_PM_LABEL) {
+                        _this.amEnabled = true;
+                        _this.pmEnabled = true;
+                    }
+                });
+            }
+
+            var layoutButton;
+            if (this.options.showToggleLayoutButton) {
+                var toggleButtonContainer = $('<div></div>').addClass('jh-toggle-button-container').appendTo(buttonContainer);
+                $(' <input type="checkbox" id="clockLayout"><label for="clockLayout">24h</label> ').appendTo(toggleButtonContainer);
+                layoutButton = $('#clockLayout').button().on('change', function () {
+                    var val = $(this).is(':checked');
+                    _this.twelveHoursLayout = !val;
+                    if (typeof amPmButtonContainer !== 'undefined') {
+                        if (val) {
+                            amPmButtonContainer.hide();
+                        } else {
+                            amPmButtonContainer.show();
                         }
-                    });
+                    }
+                    _this._clearSVGElements();
+                    _this._createSVGElements();
+                });
+            }
 
+            // Set initial values of layoutButton
+            if (typeof amPmButtonContainer !== 'undefined') {
+                if (_this.twelveHoursLayout) {
+                    if (typeof layoutButton !== 'undefined') {
+                        layoutButton.prop("checked", false);
+                    }
+                    amPmButtonContainer.show();
+                } else {
+                    if (typeof layoutButton !== 'undefined') {
+                        layoutButton.prop("checked", true);
+                    }
+                    amPmButtonContainer.hide();
                 }
-
-                // AM/PM Buttons
-                if (this.options.enableAmPmButtons) {
-                    amPmButtonContainer = $('<div></div>').addClass('jh-am-pm-button-container').appendTo(buttonContainer);
-                    $(' <input type="radio" id="jh-am-button" name="radio" value="' + AM_LABEL + '"><label for="jh-am-button">' + AM_LABEL + '</label>').appendTo(amPmButtonContainer);
-                    $(' <input type="radio" id="jh-pm-button" name="radio" value="' + PM_LABEL + '"><label for="jh-pm-button">' + PM_LABEL + '</label>').appendTo(amPmButtonContainer);
-                    $(' <input type="radio" id="jh-both-button" name="radio"  value="' + AM_PM_LABEL + '" checked="checked"><label for="jh-both-button">' + AM_PM_LABEL + '</label>').appendTo(amPmButtonContainer);
-
-                    amPmButtonContainer.buttonset();
-
-                    $('input:radio[name=radio]').change(function () {
-                        _this.amEnabled = false;
-                        _this.pmEnabled = false;
-                        if (this.value === AM_LABEL) {
-                            _this.amEnabled = true;
-                        } else if (this.value === PM_LABEL) {
-                            _this.pmEnabled = true;
-                        } else if (this.value === AM_PM_LABEL) {
-                            _this.amEnabled = true;
-                            _this.pmEnabled = true;
-                        }
-                    });
+                if (typeof layoutButton !== 'undefined') {
+                    layoutButton.button('refresh');
                 }
             }
+
+            this.buttonContainerHeight = buttonContainer.outerHeight();
         },
 
         /**
          *
          * @private
          */
-        _createElements: function () {
+        _createSVGElements: function () {
             var _this = this;
             function drawClock(svg) {
                 _this.svg = svg;
@@ -623,14 +669,22 @@ $(function () {
                 // Small ticks
                 var lengthShort = _this.circleRadius - _this.options.faceTicksTinyLength;
                 var tOptions = _this.options.faceTicksTinyOptions;
-                for (var i = 0; i < DEGREES_CIRCLE; i += 6) {
+                var degreesPerTick = 6;
+                if(!_this.twelveHoursLayout) {
+                    degreesPerTick /= 2;
+                }
+                for (var i = 0; i < DEGREES_CIRCLE; i += degreesPerTick) {
                     tOptions.transform = 'rotate(' + i + ')';
                     svg.line(svgClockFaceGroup, 0, _this.circleRadius, 0, lengthShort, tOptions);
                 }
 
                 // Large ticks (12-3-6-9)
                 var lengthLong = _this.circleRadius - _this.options.faceTicksLargeLength;
-                for (i = 0; i < DEGREES_CIRCLE; i += 30) {
+                degreesPerTick = DEGREES_PER_12_HOUR;
+                if(!_this.twelveHoursLayout) {
+                    degreesPerTick = DEGREES_PER_24_HOUR;
+                }
+                for (i = 0; i < DEGREES_CIRCLE; i += degreesPerTick) {
                     tOptions = _this.options.faceTicksLargeOptions;
                     tOptions.transform = 'rotate(' + i + ')';
                     svg.line(svgClockFaceGroup, 0, _this.circleRadius, 0, lengthLong, tOptions);
@@ -638,18 +692,30 @@ $(function () {
 
                 // Text
                 if (_this.options.showHourLabels) {
-                    svg.text(svgClockFaceGroup, 0, -_this.circleRadius - 12, "12");
-                    svg.text(svgClockFaceGroup, 0, _this.circleRadius + _this.hourLabelFontSize + 12, "6");
-                    svg.text(svgClockFaceGroup, -_this.circleRadius - _this.hourLabelFontSize, _this.hourLabelFontSize/4, "9");
-                    svg.text(svgClockFaceGroup, _this.circleRadius + _this.hourLabelFontSize, _this.hourLabelFontSize/4, "3");
+                    if(_this.twelveHoursLayout) {
+                        svg.text(svgClockFaceGroup, 0, -_this.circleRadius - 12, "12");
+                        svg.text(svgClockFaceGroup, 0, _this.circleRadius + _this.hourLabelFontSize + 6, "6");
+                        svg.text(svgClockFaceGroup, -_this.circleRadius - _this.hourLabelFontSize, _this.hourLabelFontSize/4, "9");
+                        svg.text(svgClockFaceGroup, _this.circleRadius + _this.hourLabelFontSize, _this.hourLabelFontSize/4, "3");
+                    } else {
+                        svg.text(svgClockFaceGroup, 0, -_this.circleRadius - 12, "0");
+                        svg.text(svgClockFaceGroup, 0, _this.circleRadius + _this.hourLabelFontSize + 6, "12");
+                        svg.text(svgClockFaceGroup, -_this.circleRadius - _this.hourLabelFontSize, _this.hourLabelFontSize/4, "18");
+                        svg.text(svgClockFaceGroup, _this.circleRadius + _this.hourLabelFontSize, _this.hourLabelFontSize/4, "6");
+                    }
+
                     $('text', svg.root()).attr('text-anchor', 'middle').addClass('hour-label');
                 }
             }
 
-            this.element.svgContainer = $('<div></div>').addClass('jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
             this.element.svgContainer.svg({
                 onLoad: drawClock
             });
+        },
+
+        _clearSVGElements: function() {
+            this.element.svgContainer.empty();
+            this.element.svgContainer.removeClass('hasSVG');
         },
 
         _destroy: function () {
