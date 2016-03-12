@@ -46,11 +46,11 @@ $( "#time-picker" ).clockTimeIntervalPicker({useTwelveHoursLayout : false});
 | Option | Values |  Default | Description |
 | --- | --- | --- | --- |
 | **Interactions** |
-| `multiSelection` | `true` / `false` | `true` |
-| `enableAmPmButtons` | `true` / `false` | `true` |
-| `useTwelveHoursLayout` | `true` / `false` | `true` |
-| `selectionTicksMinutes` | Integer (> 0) | 30 |
-| `showToggleLayoutButton` | `true` / `false` | `true` |
+| `multiSelection` | `true` / `false` | `true` | if `true`, allows the selection of more than one interval with CTRL-hold
+| `enableAmPmButtons` | `true` / `false` | `true` | if `true`, shows buttons to switch between AM / PM and both
+| `useTwelveHoursLayout` | `true` / `false` | `true` | if `true`, the clock layout is as usual, `false` shows a 24h layout
+| `selectionTicksMinutes` | Integer (> 0) | 30 | defines the tick interval
+| `showToggleLayoutButton` | `true` / `false` | `true` | if `true`, allows the user to switch between 12h/24h layout
 | **Design** |
 | `showHourLabels` | `true` / `false` | `true` |
 | `showIndicatorLine` | `true` / `false` | `true` |
