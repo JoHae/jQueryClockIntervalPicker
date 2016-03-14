@@ -16,23 +16,56 @@ $(function () {
 
     var HOURS_PER_DAY = 24;
     var MINUTES_PER_HOUR = 60;
-    var MINUTES_PER_DAY = MINUTES_PER_HOUR*24;
+    var MINUTES_PER_DAY = MINUTES_PER_HOUR * 24;
     var DEGREES_CIRCLE = 360;
     var DEGREES_PER_24_HOUR = DEGREES_CIRCLE / HOURS_PER_DAY;
     var DEGREES_PER_12_HOUR = DEGREES_PER_24_HOUR * 2;
     var DEGREES_PER_24_MINUTE = DEGREES_PER_24_HOUR / MINUTES_PER_HOUR;
     var DEGREES_PER_12_MINUTE = DEGREES_PER_12_HOUR / MINUTES_PER_HOUR;
 
+    // SVG Constants
+    var SVG_NS = "http://www.w3.org/2000/svg";
+    var SVG_ATTR_NAMES = {
+        class_: 'class', in_: 'in',
+        alignmentBaseline: 'alignment-baseline', baselineShift: 'baseline-shift',
+        clipPath: 'clip-path', clipRule: 'clip-rule',
+        colorInterpolation: 'color-interpolation',
+        colorInterpolationFilters: 'color-interpolation-filters',
+        colorRendering: 'color-rendering', dominantBaseline: 'dominant-baseline',
+        enableBackground: 'enable-background', fillOpacity: 'fill-opacity',
+        fillRule: 'fill-rule', floodColor: 'flood-color',
+        floodOpacity: 'flood-opacity', fontFamily: 'font-family',
+        fontSize: 'font-size', fontSizeAdjust: 'font-size-adjust',
+        fontStretch: 'font-stretch', fontStyle: 'font-style',
+        fontVariant: 'font-variant', fontWeight: 'font-weight',
+        glyphOrientationHorizontal: 'glyph-orientation-horizontal',
+        glyphOrientationVertical: 'glyph-orientation-vertical',
+        horizAdvX: 'horiz-adv-x', horizOriginX: 'horiz-origin-x',
+        imageRendering: 'image-rendering', letterSpacing: 'letter-spacing',
+        lightingColor: 'lighting-color', markerEnd: 'marker-end',
+        markerMid: 'marker-mid', markerStart: 'marker-start',
+        stopColor: 'stop-color', stopOpacity: 'stop-opacity',
+        strikethroughPosition: 'strikethrough-position',
+        strikethroughThickness: 'strikethrough-thickness',
+        strokeDashArray: 'stroke-dasharray', strokeDashOffset: 'stroke-dashoffset',
+        strokeLineCap: 'stroke-linecap', strokeLineJoin: 'stroke-linejoin',
+        strokeMiterLimit: 'stroke-miterlimit', strokeOpacity: 'stroke-opacity',
+        strokeWidth: 'stroke-width', textAnchor: 'text-anchor',
+        textDecoration: 'text-decoration', textRendering: 'text-rendering',
+        underlinePosition: 'underline-position', underlineThickness: 'underline-thickness',
+        vertAdvY: 'vert-adv-y', vertOriginY: 'vert-origin-y',
+        wordSpacing: 'word-spacing', writingMode: 'writing-mode'
+    };
+
     $.widget('jh.clockTimeIntervalPicker', {
         options: {
             multiSelection: true,
-            showFaceCircle: false,
             enableAmPmButtons: true,
             showToggleLayoutButton: true,
             useTwelveHoursLayout: true,
-            showHourLabels : true,
-            selectionTicksMinutes : 30,
-            showIndicatorLine : true,
+            showHourLabels: true,
+            selectionTicksMinutes: 30,
+            showIndicatorLine: true,
             indicatorLineOptions: {
                 stroke: 'black',
                 strokeWidth: 2
@@ -45,11 +78,11 @@ $(function () {
             faceTicksTinyOptions: {
                 strokeWidth: 2
             },
+            showFaceCircle: false,
             faceCircleOptions: {
-                fill: 'black',
-                fillOpacity: 0.0,
+                fillOpacity: 0,
                 stroke: 'black',
-                strokeOpacity: 0.0,
+                strokeOpacity: 1,
                 strokeWidth: 2
             },
             faceOverlayOptions: {
@@ -94,7 +127,7 @@ $(function () {
             // NOTE: We will start at 00:00 / 12:00
             this.ticksMinutes = [];
             var numTicks = MINUTES_PER_DAY / this.options.selectionTicksMinutes;
-            for(var i = 0; i <= numTicks; i++) {
+            for (var i = 0; i <= numTicks; i++) {
                 this.ticksMinutes.push(i * this.options.selectionTicksMinutes);
             }
 
@@ -106,7 +139,7 @@ $(function () {
             this._initMouseEventHandlers();
         },
 
-        _initSVGSizeVariables: function() {
+        _initSVGSizeVariables: function () {
             this.availableWidth = this.element.width();
             this.availableHeight = this.element.height();
             this.availableSVGWidth = this.availableWidth;
@@ -117,7 +150,7 @@ $(function () {
             if (this.options.showFaceCircle) {
                 this.circleRadius -= (2 * this.options.faceCircleOptions.strokeWidth);
             }
-            if(this.options.showHourLabels) {
+            if (this.options.showHourLabels) {
                 this.hourLabelFontSize = parseInt(this._getCssClassValue('hour-label', 'font-size'));
                 this.circleRadius -= 2 * this.hourLabelFontSize;
             }
@@ -125,7 +158,7 @@ $(function () {
             this.interactionGroupOptions.transform = 'translate(' + this.middle + ',' + this.middle + ')';
         },
 
-        _initMouseEventHandlers : function() {
+        _initMouseEventHandlers: function () {
             var _this = this;
             var lastY = 0;
             var lastX = 0;
@@ -136,40 +169,41 @@ $(function () {
 
                 // Right Click to reset / select all if no interval exists
                 if (event.which === 3) {
-                    if(_this.intervalCount > 0) {
+                    if (_this.intervalCount > 0) {
                         _this._clearSelection();
                         _this.element.trigger("selectionChanged", {
                             intervals: {}
                         });
                     } else {
-                        if(_this.amEnabled) {
+                        if (_this.amEnabled) {
                             _this.selectedIntervals.push({
-                                startTime : {
-                                    hours : 0,
-                                    minutes : 0
+                                startTime: {
+                                    hours: 0,
+                                    minutes: 0
                                 },
-                                endTime : {
-                                    hours : 11,
-                                    minutes : 59
+                                endTime: {
+                                    hours: 11,
+                                    minutes: 59
                                 }
                             });
                         }
-                        if(_this.pmEnabled) {
+                        if (_this.pmEnabled) {
                             _this.selectedIntervals.push({
-                                startTime : {
-                                    hours : 12,
-                                    minutes : 0
+                                startTime: {
+                                    hours: 12,
+                                    minutes: 0
                                 },
-                                endTime : {
-                                    hours : 23,
-                                    minutes : 59
+                                endTime: {
+                                    hours: 23,
+                                    minutes: 59
                                 }
                             });
                         }
 
                         // Draw a Circle
-                        _this.interactionGroups.push(_this.svg.group(_this.interactionGroupOptions));
-                        _this.svg.circle(_this.interactionGroups[_this.intervalCount], 0, 0, _this.circleRadius);
+                        _this.interactionGroups.push(_this._createSvgGroup(_this.svg, _this.interactionGroupOptions));
+                        _this._createSvgCircle(_this.interactionGroups[_this.intervalCount], 0, 0, _this.circleRadius);
+
                         _this.intervalCount++;
                         _this.startAngles.push(0);
                         _this.endAngles.push(0);
@@ -198,7 +232,7 @@ $(function () {
 
                 mouseDown = true;
                 _this.element.trigger("selectionStarted", {
-                    intervals : _this._getIntervalsFromTimeObj(_this.actualStartTime, null, _this.amEnabled, _this.pmEnabled)
+                    intervals: _this._getIntervalsFromTimeObj(_this.actualStartTime, null, _this.amEnabled, _this.pmEnabled)
                 });
             });
 
@@ -228,7 +262,7 @@ $(function () {
 
                 _this.actualStartTime = null;
                 _this.element.trigger("selectionEnded", {
-                    intervals : intervals
+                    intervals: intervals
                 });
                 _this.element.trigger("selectionChanged", {intervals: _this.selectedIntervals});
             });
@@ -272,20 +306,20 @@ $(function () {
             });
         },
 
-        _getTickTime: function(hours, minutes) {
+        _getTickTime: function (hours, minutes) {
             // Correct time it should be according to ticks
             var totalMinutes = hours * MINUTES_PER_HOUR + minutes;
 
             // Find nearest element in array regarding total minute
             var tickTotalMinutes;
-            for(var i = 0; i < this.ticksMinutes.length - 1; i++) {
+            for (var i = 0; i < this.ticksMinutes.length - 1; i++) {
                 var t = this.ticksMinutes[i];
-                var tNext = this.ticksMinutes[i+1];
-                if(totalMinutes >= t && totalMinutes <= tNext) {
+                var tNext = this.ticksMinutes[i + 1];
+                if (totalMinutes >= t && totalMinutes <= tNext) {
                     // We have the correct position, determine correct tick
                     var diff = totalMinutes - t;
                     var diffNext = tNext - totalMinutes;
-                    if(diff < diffNext) {
+                    if (diff < diffNext) {
                         tickTotalMinutes = t;
                     } else {
                         tickTotalMinutes = tNext;
@@ -295,7 +329,7 @@ $(function () {
             }
 
             var tickHours = parseInt(tickTotalMinutes / MINUTES_PER_HOUR);
-            if(tickHours === 24) {
+            if (tickHours === 24) {
                 tickHours = 0;
             }
 
@@ -305,40 +339,42 @@ $(function () {
             };
         },
 
-        _polarToCartesian : function(dist, angle) {
+        _polarToCartesian: function (dist, angle) {
             // See http://math.stackexchange.com/questions/700237/coordinates-of-sector-of-circle
             return {
-                x : dist * Math.sin(angle),
-                y : dist * Math.cos(angle) * -1,
-                angle : angle
+                x: dist * Math.sin(angle),
+                y: dist * Math.cos(angle) * -1,
+                angle: angle
             };
         },
 
-        _drawIndicatorLine : function(angle) {
+        _drawIndicatorLine: function (angle) {
             // Draw Indicator Line
             this._clearIndicatorLine();
-
-            this.indicatorLineGroup = this.svg.group({transform: 'translate(' + this.middle + ',' + this.middle + ')'});
+            var translateOpt = {
+                transform: 'translate(' + this.middle + ',' + this.middle + ')'
+            };
+            this.indicatorLineGroup = this._createSvgGroup(this.svg, translateOpt);
             this.options.indicatorLineOptions.transform = 'rotate(' + this._radianToDegrees(angle) + ')';
-            this.svg.line(this.indicatorLineGroup, 0, 0, 0, -this.circleRadius, this.options.indicatorLineOptions);
+            this._createSvgLine(this.indicatorLineGroup, 0, 0, 0, -this.circleRadius, this.options.indicatorLineOptions);
         },
 
-        _clearIndicatorLine : function() {
+        _clearIndicatorLine: function () {
             // Clear Indicator Line
-            if(this.indicatorLineGroup !== null) {
-                this.svg.remove(this.indicatorLineGroup);
+            if (this.indicatorLineGroup !== null) {
+                this._removeElement(this.indicatorLineGroup);
                 this.indicatorLineGroup = null;
             }
         },
 
-        _getCssClassValue : function(className, attributeName) {
+        _getCssClassValue: function (className, attributeName) {
             var $p = $("<p></p>").addClass(className).hide().appendTo(this.element);
             var value = $p.css(attributeName);
             $p.remove();
             return value;
         },
 
-        _clearTextSelection : function () {
+        _clearTextSelection: function () {
             // Clear Text Selection since sometimes it selects labels (e.g. the timelabel)
             if (window.getSelection) {
                 if (window.getSelection().empty) {  // Chrome
@@ -371,11 +407,11 @@ $(function () {
             return angle;
         },
 
-        _radianToDegrees: function(angle) {
+        _radianToDegrees: function (angle) {
             return angle * (180 / Math.PI);
         },
 
-        _degreesToRadian: function(angle) {
+        _degreesToRadian: function (angle) {
             return angle * (Math.PI / 180);
         },
 
@@ -383,7 +419,7 @@ $(function () {
             var tooltipText = "";
             var amPmLabel = "";
 
-            if(this.twelveHoursLayout) {
+            if (this.twelveHoursLayout) {
                 if (this.amEnabled && this.pmEnabled) {
                     amPmLabel = AM_PM_LABEL;
                 } else if (this.amEnabled) {
@@ -416,8 +452,8 @@ $(function () {
 
         _getTimeFromAngle: function (angle) {
             var decimalValue;
-            if(this.twelveHoursLayout) {
-                decimalValue = 6.0 - ( 1.0 / 30.0 ) * ( (this._radianToDegrees(angle) + DEGREES_CIRCLE/2) % DEGREES_CIRCLE ) * -1;
+            if (this.twelveHoursLayout) {
+                decimalValue = 6.0 - ( 1.0 / 30.0 ) * ( (this._radianToDegrees(angle) + DEGREES_CIRCLE / 2) % DEGREES_CIRCLE ) * -1;
             } else {
                 decimalValue = 12.0 - ( 1.0 / 15.0 ) * ( (this._radianToDegrees(angle)) % DEGREES_CIRCLE ) * -1;
             }
@@ -440,9 +476,9 @@ $(function () {
             return {hours: hours, minutes: minutes};
         },
 
-        _getAngleFromTime: function(hours, minutes) {
+        _getAngleFromTime: function (hours, minutes) {
             var angle;
-            if(this.twelveHoursLayout) {
+            if (this.twelveHoursLayout) {
                 angle = hours * DEGREES_PER_12_HOUR + minutes * DEGREES_PER_12_MINUTE;
             } else {
                 angle = hours * DEGREES_PER_24_HOUR + minutes * DEGREES_PER_24_MINUTE;
@@ -450,57 +486,57 @@ $(function () {
             return angle;
         },
 
-        _getIntervalsFromTimeObj : function(startTime, endTime, amEnabled, pmEnabled) {
+        _getIntervalsFromTimeObj: function (startTime, endTime, amEnabled, pmEnabled) {
             var intervals = [];
 
             // Copy objects
-            var firstStart = $.extend({},startTime);
-            if(startTime.hours === 12) {
+            var firstStart = $.extend({}, startTime);
+            if (startTime.hours === 12) {
                 firstStart.hours = 0;
             }
 
-            var firstEnd = $.extend({},endTime);
-            if(endTime !== null && endTime.hours === 12) {
+            var firstEnd = $.extend({}, endTime);
+            if (endTime !== null && endTime.hours === 12) {
                 firstEnd.hours = 0;
             }
 
-            if(amEnabled) {
-                if(endTime !== null) {
+            if (amEnabled) {
+                if (endTime !== null) {
                     // Check whether endTime should be PM
-                    if(firstEnd.hours < firstStart.hours || firstEnd.hours === firstStart.hours && firstEnd.minutes < firstStart.minutes) {
+                    if (firstEnd.hours < firstStart.hours || firstEnd.hours === firstStart.hours && firstEnd.minutes < firstStart.minutes) {
                         firstEnd.hours += 12;
                     }
 
-                    intervals.push({startTime : firstStart, endTime: firstEnd});
+                    intervals.push({startTime: firstStart, endTime: firstEnd});
                 } else {
-                    intervals.push({startTime : firstStart});
+                    intervals.push({startTime: firstStart});
                 }
             }
 
-            if(pmEnabled) {
+            if (pmEnabled) {
                 // Copy objects
-                firstStart = $.extend({},startTime);
-                if(startTime.hours === 12) {
+                firstStart = $.extend({}, startTime);
+                if (startTime.hours === 12) {
                     firstStart.hours = 0;
                 }
 
-                firstEnd = $.extend({},endTime);
-                if(endTime !== null && endTime.hours === 12) {
+                firstEnd = $.extend({}, endTime);
+                if (endTime !== null && endTime.hours === 12) {
                     firstEnd.hours = 0;
                 }
 
-                if(endTime !== null) {
-                      // Check whether endTime should be AM
-                    if(firstEnd.hours < firstStart.hours || firstEnd.hours === firstStart.hours && firstEnd.minutes < firstStart.minutes) {
+                if (endTime !== null) {
+                    // Check whether endTime should be AM
+                    if (firstEnd.hours < firstStart.hours || firstEnd.hours === firstStart.hours && firstEnd.minutes < firstStart.minutes) {
                         firstEnd.hours -= 12;
                     }
 
                     firstEnd.hours += 12;
                     firstStart.hours += 12;
 
-                    intervals.push({startTime : firstStart, endTime: firstEnd});
+                    intervals.push({startTime: firstStart, endTime: firstEnd});
                 } else {
-                    intervals.push({startTime : firstStart});
+                    intervals.push({startTime: firstStart});
                 }
             }
             return intervals;
@@ -509,16 +545,16 @@ $(function () {
         _redrawSvgArcs: function () {
             // Reinit new interaction groups
             this.interactionGroups = [];
-            for(var i = 0; i < this.intervalCount; i++) {
-                this.interactionGroups.push(this.svg.group(this.interactionGroupOptions));
+            for (var i = 0; i < this.intervalCount; i++) {
+                this.interactionGroups.push(this._createSvgGroup(this.svg, this.interactionGroupOptions));
             }
 
             // We have to use the angles to draw the args
-            for(i = 0; i < this.intervalCount; i++) {
-                if(this.startAngles[i] === 0 && this.endAngles[i] === 0) {
+            for (i = 0; i < this.intervalCount; i++) {
+                if (this.startAngles[i] === 0 && this.endAngles[i] === 0) {
                     // Everything selected - draw a circle
-                    this.interactionGroups.push(this.svg.group(this.interactionGroupOptions));
-                    this.svg.circle(this.interactionGroups[this.intervalCount], 0, 0, this.circleRadius);
+                    this.interactionGroups.push(this._createSvgGroup(this.svg, this.interactionGroupOptions));
+                    this._createSvgCircle(this.interactionGroups[this.intervalCount], 0, 0, this.circleRadius);
                 } else {
                     var startPoint = this._polarToCartesian(this.circleRadius, this.startAngles[i]);
                     var endPoint = this._polarToCartesian(this.circleRadius, this.endAngles[i]);
@@ -541,7 +577,7 @@ $(function () {
                 // Clear only last arc if there is one
                 if (this.interactionGroups.length > this.intervalCount) {
                     for (var i = this.intervalCount; i < this.interactionGroups.length; i++) {
-                        this.svg.remove(this.interactionGroups[i]);
+                        this._removeElement(this.interactionGroups[i]);
                         this.interactionGroups.pop();
                     }
                 }
@@ -550,39 +586,33 @@ $(function () {
                 console.error("length: " + this.interactionGroups.length);
                 console.error("Count:  " + this.intervalCount);
             }
-            this.interactionGroups.push(this.svg.group(this.interactionGroupOptions));
+            this.interactionGroups.push(this._createSvgGroup(this.svg, this.interactionGroupOptions));
             this._drawSvgArc(arcStartPoint, arcEndPoint, this.interactionGroups[this.intervalCount]);
         },
 
-        _drawSvgArc: function(arcStartPoint, arcEndPoint, parent) {
-            this.arcPath = this.svg.createPath();
-            if (typeof arcEndPoint === 'undefined' || arcEndPoint === null) {
-                // Just draw a line
-                this.arcPath.move(0, 0).line([[0, 0], [arcStartPoint.x, arcStartPoint.y]]).close();
-            } else {
+        _drawSvgArc: function (arcStartPoint, arcEndPoint, parent) {
+            // Draw a line
+            this.arcPath = this._svgPathMove(0, 0) + this._svgPathLine(0, 0, arcStartPoint.x, arcStartPoint.y);
+            if (typeof arcEndPoint !== 'undefined' && arcEndPoint !== null) {
                 // Draw additional arc
                 var aDiff = arcEndPoint.angle - arcStartPoint.angle;
                 var clockwise = false;
-                if(aDiff > Math.PI) {
+                if (aDiff > Math.PI) {
                     clockwise = true;
                 }
-                if(aDiff < 0 && aDiff > Math.PI * -1) {
+                if (aDiff < 0 && aDiff > Math.PI * -1) {
                     clockwise = !clockwise;
                 }
 
-                this.arcPath.move(0, 0)
-                    .line([[0, 0], [arcStartPoint.x, arcStartPoint.y]])
-                    .arc(this.circleRadius, this.circleRadius, 1, clockwise, 1, arcEndPoint.x, arcEndPoint.y)
-                    .line([[arcEndPoint.x, arcEndPoint.y], [0, 0]])
-                    .close();
+                this.arcPath += this._svgPathArc(this.circleRadius, this.circleRadius, 1, clockwise, 1, arcEndPoint.x, arcEndPoint.y) + this._svgPathLine(arcEndPoint.x, arcEndPoint.y, 0, 0);
             }
-            this.svg.path(parent, this.arcPath);
+            this._svgPathCloseAndAppend(parent, this.arcPath);
         },
 
         _clearArcGroups: function () {
             if (this.interactionGroups.length > 0) {
                 for (var i = 0; i < this.interactionGroups.length; i++) {
-                    this.svg.remove(this.interactionGroups[i]);
+                    this._removeElement(this.interactionGroups[i]);
                 }
             }
             this.interactionGroups = [];
@@ -600,7 +630,7 @@ $(function () {
             this.arcPath = null;
         },
 
-        _clearSVGElements: function() {
+        _clearSVGElements: function () {
             this.element.svgContainer.empty();
             this.element.svgContainer.removeClass('hasSVG');
             this.interactionGroups = [];
@@ -608,12 +638,16 @@ $(function () {
 
         _timeObjectToString: function (timeObj) {
             var hours = timeObj.hours;
-            if(hours === 0 && this.twelveHoursLayout) {
+            if (hours === 0 && this.twelveHoursLayout) {
                 hours = 12;
             }
             return ( hours < 10 ? "0" + hours : hours ) + ":" + (timeObj.minutes < 10 ? "0" + timeObj.minutes : timeObj.minutes);
         },
 
+        /**
+         *
+         * @private
+         */
         _createBasicUIElement: function () {
             var _this = this;
 
@@ -697,68 +731,172 @@ $(function () {
          */
         _createSVGElements: function () {
             var _this = this;
-            function drawClock(svg) {
-                _this.svg = svg;
-                $(svg.root()).attr('width', '100%').attr('height', '100%');
 
-                // See: http://stackoverflow.com/questions/12361971/does-the-attr-in-jquery-force-lowercase
-                document.getElementsByTagName("svg")[0].setAttribute('viewBox', '0 0 ' + _this.svgWidthHeight + ' ' + _this.svgWidthHeight);
+            this.svg = document.createElementNS(SVG_NS, 'svg');
+            this.svg.setAttribute('version', '1.1');
+            this.svg.setAttribute('width', '100%');
+            this.svg.setAttribute('height', '100%');
+            this.svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+            this.svg.setAttribute('viewBox', '0 0 ' + _this.svgWidthHeight + ' ' + _this.svgWidthHeight);
+            this.element.svgContainer.append(this.svg);
 
-                var radius = _this.circleRadius;
+            var radius = _this.circleRadius;
 
-                if (_this.options.showFaceCircle) {
-                    svg.circle(_this.middle, _this.middle, radius, _this.options.faceCircleOptions);
-                }
-
-                // Draw the face
-                // 12 to 12
-                var svgClockFaceGroup = svg.group({stroke: 'black', transform: 'translate(' + _this.middle + ',' + _this.middle + ')'});
-
-                // Small ticks
-                var lengthShort = _this.circleRadius - _this.options.faceTicksTinyLength;
-                var tOptions = _this.options.faceTicksTinyOptions;
-                var degreesPerTick = 6;
-                if(!_this.twelveHoursLayout) {
-                    degreesPerTick /= 2;
-                }
-                for (var i = 0; i < DEGREES_CIRCLE; i += degreesPerTick) {
-                    tOptions.transform = 'rotate(' + i + ')';
-                    svg.line(svgClockFaceGroup, 0, _this.circleRadius, 0, lengthShort, tOptions);
-                }
-
-                // Large ticks (12-3-6-9)
-                var lengthLong = _this.circleRadius - _this.options.faceTicksLargeLength;
-                degreesPerTick = DEGREES_PER_12_HOUR;
-                if(!_this.twelveHoursLayout) {
-                    degreesPerTick = DEGREES_PER_24_HOUR;
-                }
-                for (i = 0; i < DEGREES_CIRCLE; i += degreesPerTick) {
-                    tOptions = _this.options.faceTicksLargeOptions;
-                    tOptions.transform = 'rotate(' + i + ')';
-                    svg.line(svgClockFaceGroup, 0, _this.circleRadius, 0, lengthLong, tOptions);
-                }
-
-                // Text
-                if (_this.options.showHourLabels) {
-                    if(_this.twelveHoursLayout) {
-                        svg.text(svgClockFaceGroup, 0, -_this.circleRadius - 12, "12");
-                        svg.text(svgClockFaceGroup, 0, _this.circleRadius + _this.hourLabelFontSize + 6, "6");
-                        svg.text(svgClockFaceGroup, -_this.circleRadius - _this.hourLabelFontSize, _this.hourLabelFontSize/4, "9");
-                        svg.text(svgClockFaceGroup, _this.circleRadius + _this.hourLabelFontSize, _this.hourLabelFontSize/4, "3");
-                    } else {
-                        svg.text(svgClockFaceGroup, 0, -_this.circleRadius - 12, "0");
-                        svg.text(svgClockFaceGroup, 0, _this.circleRadius + _this.hourLabelFontSize + 6, "12");
-                        svg.text(svgClockFaceGroup, -_this.circleRadius - _this.hourLabelFontSize, _this.hourLabelFontSize/4, "18");
-                        svg.text(svgClockFaceGroup, _this.circleRadius + _this.hourLabelFontSize, _this.hourLabelFontSize/4, "6");
-                    }
-
-                    $('text', svg.root()).attr('text-anchor', 'middle').addClass('hour-label');
-                }
+            if (_this.options.showFaceCircle) {
+                _this._createSvgCircle(this.svg, _this.middle, _this.middle, radius, _this.options.faceCircleOptions);
             }
 
-            this.element.svgContainer.svg({
-                onLoad: drawClock
+            // Draw the face
+            // 12 to 12
+            var svgClockFaceGroup = _this._createSvgGroup(this.svg, {
+                stroke: 'black',
+                transform: 'translate(' + _this.middle + ',' + _this.middle + ')'
             });
+
+            // Small ticks
+            var lengthShort = _this.circleRadius - _this.options.faceTicksTinyLength;
+            var tOptions = _this.options.faceTicksTinyOptions;
+            var degreesPerTick = 6;
+            if (!_this.twelveHoursLayout) {
+                degreesPerTick /= 2;
+            }
+            for (var i = 0; i < DEGREES_CIRCLE; i += degreesPerTick) {
+                tOptions.transform = 'rotate(' + i + ')';
+                _this._createSvgLine(svgClockFaceGroup, 0, _this.circleRadius, 0, lengthShort, tOptions);
+            }
+
+            // Large ticks (12-3-6-9)
+            var lengthLong = _this.circleRadius - _this.options.faceTicksLargeLength;
+            degreesPerTick = DEGREES_PER_12_HOUR;
+            if (!_this.twelveHoursLayout) {
+                degreesPerTick = DEGREES_PER_24_HOUR;
+            }
+            for (i = 0; i < DEGREES_CIRCLE; i += degreesPerTick) {
+                tOptions = _this.options.faceTicksLargeOptions;
+                tOptions.transform = 'rotate(' + i + ')';
+                _this._createSvgLine(svgClockFaceGroup, 0, _this.circleRadius, 0, lengthLong, tOptions);
+            }
+
+            // Text
+            if (_this.options.showHourLabels) {
+                var className = 'hour-label';
+                var opt = {
+                    textAnchor: 'middle'
+                };
+                if (_this.twelveHoursLayout) {
+                    _this._createSvgText(svgClockFaceGroup, 0, -_this.circleRadius - 12, "12", className, opt);
+                    _this._createSvgText(svgClockFaceGroup, 0, _this.circleRadius + _this.hourLabelFontSize + 6, "6", className, opt);
+                    _this._createSvgText(svgClockFaceGroup, -_this.circleRadius - _this.hourLabelFontSize, _this.hourLabelFontSize / 4, "9", className, opt);
+                    _this._createSvgText(svgClockFaceGroup, _this.circleRadius + _this.hourLabelFontSize, _this.hourLabelFontSize / 4, "3", className, opt);
+                } else {
+                    _this._createSvgText(svgClockFaceGroup, 0, -_this.circleRadius - 12, "0", className, opt);
+                    _this._createSvgText(svgClockFaceGroup, 0, _this.circleRadius + _this.hourLabelFontSize + 6, "12", className, opt);
+                    _this._createSvgText(svgClockFaceGroup, -_this.circleRadius - _this.hourLabelFontSize, _this.hourLabelFontSize / 4, "18", className, opt);
+                    _this._createSvgText(svgClockFaceGroup, _this.circleRadius + _this.hourLabelFontSize, _this.hourLabelFontSize / 4, "6", className, opt);
+                }
+            }
+        },
+
+        _setSvgElementAttributes: function (element, options) {
+            for (var attr in options) {
+                var value = options[attr];
+                if (value !== null) {
+                    element.setAttribute(SVG_ATTR_NAMES[attr] || attr, value);
+                }
+            }
+        },
+
+        _createSvgCircle: function (parent, cx, cy, radius, options) {
+            var circle = this._createSvgElement(parent, 'circle');
+            circle.setAttribute('cx', cx);
+            circle.setAttribute('cy', cy);
+            circle.setAttribute('r', radius);
+            this._setSvgElementAttributes(circle, options);
+            parent.appendChild(circle);
+            return circle;
+        },
+
+        _createSvgLine: function (parent, x1, y1, x2, y2, options) {
+            var line = this._createSvgElement(parent, 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            this._setSvgElementAttributes(line, options);
+            return line;
+        },
+
+        _createSvgGroup: function (parent, options) {
+            var group = this._createSvgElement(parent, 'g');
+            this._setSvgElementAttributes(group, options);
+            return group;
+        },
+
+        _createSvgText: function (parent, x, y, textValue, className, options) {
+            var text = this._createSvgElement(parent, 'text');
+            text.innerHTML = textValue;
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute("class", className);
+            this._setSvgElementAttributes(text, options);
+            return text;
+        },
+
+        _svgPathLine: function (x1, y1, x2, y2) {
+            return this._svgPathCoordinates('L', [[x1, y1], [x2, y2]]);
+        },
+
+        _svgPathMove: function (x, y) {
+            return this._svgPathCoordinates('M', x, y, null, null, null, null);
+        },
+
+        _svgPathArc: function (rx, ry, xRotate, large, clockwise, x, y) {
+            var p = 'A';
+            if ($.isArray(rx)) {
+                for (var i = 0; i < rx.length; i++) {
+                    var cs = rx[i];
+                    p += (i === 0 ? '' : ' ') + cs[0] + ',' + cs[1] + ' ' +
+                        cs[2] + ' ' + (cs[3] ? '1' : '0') + ',' + (cs[4] ? '1' : '0') + ' ' + cs[5] + ',' + cs[6];
+                }
+            }
+            else {
+                p += rx + ',' + ry + ' ' + xRotate + ' ' +
+                    (large ? '1' : '0') + ',' + (clockwise ? '1' : '0') + ' ' + x + ',' + y;
+            }
+            return p;
+        },
+
+        _svgPathCloseAndAppend: function (parent, attributeString) {
+            var path = this._createSvgElement(parent, 'path');
+            attributeString += 'z';
+            path.setAttribute('d', attributeString);
+            return path;
+        },
+
+        _svgPathCoordinates: function (cmd, x1, y1, x2, y2, x3, y3) {
+            var p = '';
+            if ($.isArray(x1)) {
+                for (var i = 0; i < x1.length; i++) {
+                    var cs = x1[i];
+                    p += (i === 0 ? cmd : ' ') + cs[0] + ',' + cs[1] + (cs.length < 4 ? '' :
+                        ' ' + cs[2] + ',' + cs[3] + (cs.length < 6 ? '' : ' ' + cs[4] + ',' + cs[5]));
+                }
+            }
+            else {
+                p += cmd + x1 + ',' + y1 +
+                    (x2 === null ? '' : ' ' + x2 + ',' + y2 + (x3 === null ? '' : ' ' + x3 + ',' + y3));
+            }
+            return p;
+        },
+
+        _createSvgElement: function (parent, tagName) {
+            var el = document.createElementNS(SVG_NS, tagName);
+            parent.appendChild(el);
+            return el;
+        },
+
+        _removeElement: function (element) {
+            element.parentElement.removeChild(element);
         },
 
         _destroy: function () {
@@ -773,7 +911,7 @@ $(function () {
             $.Widget.prototype._setOption.apply(this, arguments);
         },
 
-        refresh: function() {
+        refresh: function () {
             this._clearSVGElements();
             this._initSVGSizeVariables();
             this.element.svgContainer.width(this.svgWidthHeight).height(this.svgWidthHeight);
