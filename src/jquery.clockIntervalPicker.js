@@ -843,26 +843,17 @@ $(function () {
         },
 
         _svgPathLine: function (x1, y1, x2, y2) {
-            return this._svgPathCoordinates('L', [[x1, y1], [x2, y2]]);
+            return this._svgPathCoordinatesArr('L', [[x1, y1], [x2, y2]]);
         },
 
         _svgPathMove: function (x, y) {
-            return this._svgPathCoordinates('M', x, y, null, null, null, null);
+            return this._svgPathCoordinates('M', x, y);
         },
 
         _svgPathArc: function (rx, ry, xRotate, large, clockwise, x, y) {
             var p = 'A';
-            if ($.isArray(rx)) {
-                for (var i = 0; i < rx.length; i++) {
-                    var cs = rx[i];
-                    p += (i === 0 ? '' : ' ') + cs[0] + ',' + cs[1] + ' ' +
-                        cs[2] + ' ' + (cs[3] ? '1' : '0') + ',' + (cs[4] ? '1' : '0') + ' ' + cs[5] + ',' + cs[6];
-                }
-            }
-            else {
-                p += rx + ',' + ry + ' ' + xRotate + ' ' +
-                    (large ? '1' : '0') + ',' + (clockwise ? '1' : '0') + ' ' + x + ',' + y;
-            }
+            p += rx + ',' + ry + ' ' + xRotate + ' ' +
+                (large ? '1' : '0') + ',' + (clockwise ? '1' : '0') + ' ' + x + ',' + y;
             return p;
         },
 
@@ -873,18 +864,18 @@ $(function () {
             return path;
         },
 
-        _svgPathCoordinates: function (cmd, x1, y1, x2, y2, x3, y3) {
+        _svgPathCoordinates: function (cmd, x1, y1) {
             var p = '';
-            if ($.isArray(x1)) {
-                for (var i = 0; i < x1.length; i++) {
-                    var cs = x1[i];
-                    p += (i === 0 ? cmd : ' ') + cs[0] + ',' + cs[1] + (cs.length < 4 ? '' :
-                        ' ' + cs[2] + ',' + cs[3] + (cs.length < 6 ? '' : ' ' + cs[4] + ',' + cs[5]));
-                }
-            }
-            else {
-                p += cmd + x1 + ',' + y1 +
-                    (x2 === null ? '' : ' ' + x2 + ',' + y2 + (x3 === null ? '' : ' ' + x3 + ',' + y3));
+            p += cmd + x1 + ',' + y1;
+            return p;
+        },
+
+        _svgPathCoordinatesArr: function (cmd, arr) {
+            var p = '';
+            for (var i = 0; i < arr.length; i++) {
+                var str = arr[i];
+                p += (i === 0 ? cmd : ' ') + str[0] + ',' + str[1] + (str.length < 4 ? '' :
+                    ' ' + str[2] + ',' + str[3] + (str.length < 6 ? '' : ' ' + str[4] + ',' + str[5]));
             }
             return p;
         },
