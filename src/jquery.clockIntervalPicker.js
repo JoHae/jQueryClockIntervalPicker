@@ -1,7 +1,7 @@
 /**
  * jquery.clockIntervalPicker.js - A jQuery plugin for interactive time-interval selection based on a clock metaphor.
  *
- * @version v1.0.0
+ * @version v0.0.0
  * @link    GitHub           - https://github.com/JoHae/jQueryClockIntervalPicker
  * @license MIT License      - https://opensource.org/licenses/MIT
  * @author  Johannes Häußler - <johannes.haeussler.87@gmail.com>
@@ -894,9 +894,13 @@ $(function () {
 
         },
 
-        _setOption: function () {
+        _setOption: function (key, value) {
+            // Gets called for each key value pair in
+            this.options[ key ] = value;
+            this._update();
+
             // TODO: Implement
-            //if(name === 'maxItems') {
+            //if(key === 'maxItems') {
             //    this._resizeBoxForMaxItemsOf(value);
             //}
             $.Widget.prototype._setOption.apply(this, arguments);

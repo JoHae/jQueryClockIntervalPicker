@@ -1,0 +1,41 @@
+{
+  "name": "jquery-clock-interval-picker",
+  "version": "0.0.0",
+  "description": "A jQuery ui plugin for interactive time-interval selection based on a clock metaphor.",
+  "license": "MIT",
+  "keywords": [
+    "jquery",
+    "jquery-plugin",
+    "jquery-ui",
+    "time-series",
+    "time-interval",
+    "time-picker"
+  ],
+  "homepage": "http://johae.github.io/jQueryClockIntervalPicker/",
+  "authors": [
+    "Johannes Häußler <johannes.haeussler.87@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoHae/jQueryClockIntervalPicker.git"
+  },
+  "main": [ "./build/jquery.clockIntervalPicker.min.js","./build/clockIntervalPicker.min.css" ],
+  "ignore":
+  [
+    "README*",
+    "LICENSE*",
+    ".git*",
+    "*bower.json",
+    "*jquery.json",
+    "*package.json",
+    "*Gruntfile.js",
+    ".jshintrc",
+    "node_modules",
+    "example",
+    "bower_components"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.1",
+    "jquery-ui": "^1.10.5"
+  }
+}
