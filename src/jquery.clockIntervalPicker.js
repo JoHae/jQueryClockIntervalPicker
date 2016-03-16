@@ -897,13 +897,13 @@ $(function () {
         _setOption: function (key, value) {
             // Gets called for each key value pair in
             this.options[ key ] = value;
-            this._update();
+            //this._update();
 
             // TODO: Implement
             //if(key === 'maxItems') {
             //    this._resizeBoxForMaxItemsOf(value);
             //}
-            $.Widget.prototype._setOption.apply(this, arguments);
+            //$.Widget.prototype._setOption.apply(this, arguments);
         },
 
         refresh: function () {
