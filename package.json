@@ -16,7 +16,6 @@
     "type": "git",
     "url": "git+https://github.com/JoHae/jQueryClockIntervalPicker.git"
   },
-  "main": [ "./build/jquery.clockIntervalPicker.min.js","./build/clockIntervalPicker.min.css" ],
   "bugs": {
     "url": "https://github.com/JoHae/jQueryClockIntervalPicker/issues"
   },
