@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         uglify: {
             build: {
                 files: {
-                    'build/jquery.clockIntervalPicker.min.js': ['src/jquery.clockIntervalPicker.js']
+                    'build/clockIntervalPicker.min.js': ['src/clockIntervalPicker.js']
                 }
             }
         },
