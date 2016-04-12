@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "jquery-clock-interval-picker",
   "version": "0.0.0",
   "description": "A jQuery ui plugin for interactive time-interval selection based on a clock metaphor.",
@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/JoHae/jQueryClockIntervalPicker.git"
   },
-  "main": [ "./build/jquery.clockIntervalPicker.min.js","./build/clockIntervalPicker.min.css" ],
+  "main": [ "./build/clockIntervalPicker.min.js","./build/clockIntervalPicker.min.css" ],
   "ignore":
   [
     "README*",
