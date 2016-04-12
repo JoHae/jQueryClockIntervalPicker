@@ -14,7 +14,7 @@
   "author": "Johannes Häußler <johannes.haeussler.87@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JoHae/jQueryClockIntervalPicker.git"
+    "url": "https://github.com/JoHae/jQueryClockIntervalPicker.git"
   },
   "main": "./build/jquery.clockIntervalPicker.min.js",
   "bugs": {
