@@ -664,20 +664,21 @@ $(function () {
             var amPmButtonContainer;
             if (this.options.enableAmPmButtons) {
                 amPmButtonContainer = $('<div></div>').addClass('jh-am-pm-button-container').appendTo(buttonContainer);
-                $(' <input type="radio" id="jh-am-button" name="radio" value="' + AM_LABEL + '"><label for="jh-am-button">' + AM_LABEL + '</label>').appendTo(amPmButtonContainer);
-                $(' <input type="radio" id="jh-pm-button" name="radio" value="' + PM_LABEL + '"><label for="jh-pm-button">' + PM_LABEL + '</label>').appendTo(amPmButtonContainer);
-                $(' <input type="radio" id="jh-both-button" name="radio"  value="' + AM_PM_LABEL + '" checked="checked"><label for="jh-both-button">' + AM_PM_LABEL + '</label>').appendTo(amPmButtonContainer);
+                $('<input type="radio" id="jh-am-button" name="radio" value="1"><label for="jh-am-button">' + AM_LABEL + '</label>').appendTo(amPmButtonContainer);
+                $('<input type="radio" id="jh-pm-button" name="radio" value="2"><label for="jh-pm-button">' + PM_LABEL + '</label>').appendTo(amPmButtonContainer);
+                $('<input type="radio" id="jh-both-button" name="radio"  value="3" checked="checked"><label for="jh-both-button">' + AM_PM_LABEL + '</label>').appendTo(amPmButtonContainer);
 
                 amPmButtonContainer.buttonset();
 
                 $('input:radio[name=radio]').change(function () {
+                    var val = parseInt(this.value);
                     _this.amEnabled = false;
                     _this.pmEnabled = false;
-                    if (this.value === AM_LABEL) {
+                    if (val === 1) {
                         _this.amEnabled = true;
-                    } else if (this.value === PM_LABEL) {
+                    } else if (val === 2) {
                         _this.pmEnabled = true;
-                    } else if (this.value === AM_PM_LABEL) {
+                    } else if (val === 3) {
                         _this.amEnabled = true;
                         _this.pmEnabled = true;
                     }
