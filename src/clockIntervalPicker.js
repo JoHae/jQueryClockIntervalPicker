@@ -671,14 +671,14 @@ $(function () {
                 amPmButtonContainer.buttonset();
 
                 $('input:radio[name=radio]').change(function () {
-                    var val = parseInt(this.value);
+                    var id = $('input:radio[name=radio]:checked').attr('id');
                     _this.amEnabled = false;
                     _this.pmEnabled = false;
-                    if (val === 1) {
+                    if (id === 'jh-am-button') {
                         _this.amEnabled = true;
-                    } else if (val === 2) {
+                    } else if (id === 'jh-pm-button') {
                         _this.pmEnabled = true;
-                    } else if (val === 3) {
+                    } else if (id === 'jh-both-button') {
                         _this.amEnabled = true;
                         _this.pmEnabled = true;
                     }
