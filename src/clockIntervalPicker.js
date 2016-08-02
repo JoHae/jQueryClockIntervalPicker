@@ -664,11 +664,9 @@ $(function () {
             var amPmButtonContainer;
             if (this.options.enableAmPmButtons) {
                 amPmButtonContainer = $('<div></div>').addClass('jh-am-pm-button-container').appendTo(buttonContainer);
-                $('<input type="radio" id="jh-am-button" name="radio" value="1"><label for="jh-am-button">' + AM_LABEL + '</label>').appendTo(amPmButtonContainer);
-                $('<input type="radio" id="jh-pm-button" name="radio" value="2"><label for="jh-pm-button">' + PM_LABEL + '</label>').appendTo(amPmButtonContainer);
-                $('<input type="radio" id="jh-both-button" name="radio"  value="3" checked="checked"><label for="jh-both-button">' + AM_PM_LABEL + '</label>').appendTo(amPmButtonContainer);
-
-                amPmButtonContainer.buttonset();
+                $('<label class="radio-inline"><input type="radio" id="jh-am-button" name="radio" value="1">' + AM_LABEL + '</label>').appendTo(amPmButtonContainer);
+                $('<label class="radio-inline"><input type="radio" id="jh-pm-button" name="radio" value="2">' + PM_LABEL + '</label>').appendTo(amPmButtonContainer);
+                $('<label class="radio-inline"><input type="radio" id="jh-both-button" name="radio" value="3" checked="checked">' + AM_PM_LABEL + '</label>').appendTo(amPmButtonContainer);
 
                 $('input:radio[name=radio]').change(function () {
                     var id = $('input:radio[name=radio]:checked').attr('id');
@@ -688,7 +686,7 @@ $(function () {
             var layoutButton;
             if (this.options.showToggleLayoutButton) {
                 var toggleButtonContainer = $('<div></div>').addClass('jh-toggle-button-container').appendTo(buttonContainer);
-                $(' <input type="checkbox" id="clockLayout"><label for="clockLayout">24h</label> ').appendTo(toggleButtonContainer);
+                $('<label class="checkbox-inline"><input  id="clockLayout" type="checkbox">24h</label>').appendTo(toggleButtonContainer);
                 layoutButton = $('#clockLayout').button().on('change', function () {
                     var val = $(this).is(':checked');
                     _this.twelveHoursLayout = !val;
