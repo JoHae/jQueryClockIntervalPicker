@@ -489,7 +489,7 @@ $(function () {
         _getIntervalsFromTimeObj: function (startTime, endTime, amEnabled, pmEnabled) {
             var intervals = [];
             var _self = this;
-            if(!_self.twelveHoursLayout) {
+            if (!_self.twelveHoursLayout) {
                 // 24h Layout: Just return the interval
                 intervals.push({startTime: startTime, endTime: endTime});
                 return intervals;
@@ -913,7 +913,7 @@ $(function () {
 
         _setOption: function (key, value) {
             // Gets called for each key value pair in
-            this.options[ key ] = value;
+            this.options[key] = value;
             //this._update();
 
             // TODO: Implement
@@ -929,6 +929,15 @@ $(function () {
             this.element.svgContainer.width(this.svgWidthHeight).height(this.svgWidthHeight);
             this._createSVGElements();
             this._redrawSvgArcs();
+        },
+
+        layoutData: function () {
+            var _self = this;
+            return {
+                twelveHoursLayout: _self.twelveHoursLayout,
+                amEnabled: _self.amEnabled,
+                pmEnabled: _self.pmEnabled
+            };
         }
     });
 });
