@@ -488,6 +488,12 @@ $(function () {
 
         _getIntervalsFromTimeObj: function (startTime, endTime, amEnabled, pmEnabled) {
             var intervals = [];
+            var _self = this;
+            if(!_self.twelveHoursLayout) {
+                // 24h Layout: Just return the interval
+                intervals.push({startTime: startTime, endTime: endTime});
+                return intervals;
+            }
 
             // Copy objects
             var firstStart = $.extend({}, startTime);
@@ -680,6 +686,12 @@ $(function () {
                         _this.amEnabled = true;
                         _this.pmEnabled = true;
                     }
+
+                    _this.element.trigger("layoutChanged", {
+                        amEnabled: _this.amEnabled,
+                        pmEnabled: _this.pmEnabled,
+                        twelveHoursLayout: _this.twelveHoursLayout
+                    });
                 });
             }
 
@@ -700,6 +712,12 @@ $(function () {
                     _this._clearSVGElements();
                     _this._clearSelection();
                     _this._createSVGElements();
+
+                    _this.element.trigger("layoutChanged", {
+                        amEnabled: _this.amEnabled,
+                        pmEnabled: _this.pmEnabled,
+                        twelveHoursLayout: _this.twelveHoursLayout
+                    });
                 });
             }
 

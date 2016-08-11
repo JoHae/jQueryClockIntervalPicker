@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <title>Example</title>
     <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
     <script src="http://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
 
     <!-- injector:css -->
     <link rel="stylesheet" href="/src/clockIntervalPicker.css">
@@ -25,27 +29,31 @@
         }
     </style>
 
-	<script>
-		$( document ).ready( function () {
-			var picker = $( "#time-picker" ).clockTimeIntervalPicker();
-            picker.on( "selectionStarted", function( event, timeObj ) {
+    <script>
+        $(document).ready(function () {
+            var picker = $("#time-picker").clockTimeIntervalPicker();
+            picker.on("selectionStarted", function (event, timeObj) {
                 console.log("selectionStarted");
                 console.log(timeObj);
             });
-            picker.on( "selectionEnded", function( event, interval ) {
+            picker.on("selectionEnded", function (event, interval) {
                 console.log("selectionEnded");
                 console.log(interval);
             });
-            picker.on( "selectionChanged", function( event, data ) {
+            picker.on("selectionChanged", function (event, data) {
                 console.log("selectionChanged");
                 console.log(data.intervals);
             });
+            picker.on("layoutChanged", function (event, data) {
+                console.log("layoutChanged");
+                console.log(data);
+            });
 
-            $( window ).resize(function() {
+            $(window).resize(function () {
                 picker.clockTimeIntervalPicker('refresh');
             });
-		} );
-	</script>
+        });
+    </script>
 </head>
 <body>
 <div id="time-picker" style="position: relative; width: 100%; height: 100%"></div>
