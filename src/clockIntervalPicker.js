@@ -66,9 +66,10 @@ $(function () {
             showHourLabels: true,
             selectionTicksMinutes: 1,
             showIndicatorLine: true,
+            showTooltip: true,
             indicatorLineOptions: {
                 stroke: 'black',
-                strokeWidth: 2
+                strokeWidth: 1
             },
             faceTicksLargeLength: 8,
             faceTicksLargeOptions: {
@@ -279,7 +280,9 @@ $(function () {
             });
 
             this.element.svgContainer.mouseenter(function () {
-                _this.element.tooltipContainer.show();
+                if(_this.options.showTooltip) {
+                    _this.element.tooltipContainer.show();
+                }
             });
 
             this.element.svgContainer.mousemove(function (event) {
@@ -744,11 +747,7 @@ $(function () {
                     layoutButton.button('refresh');
                 }
             }
-
-
-
             this.buttonContainerHeight = buttonContainer.outerHeight();
-            console.log(this.buttonContainerHeight);
         },
 
         /**
