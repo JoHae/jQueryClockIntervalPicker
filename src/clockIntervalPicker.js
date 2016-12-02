@@ -64,7 +64,7 @@ $(function () {
             showToggleLayoutButton: true,
             useTwelveHoursLayout: true,
             showHourLabels: true,
-            selectionTicksMinutes: 30,
+            selectionTicksMinutes: 1,
             showIndicatorLine: true,
             indicatorLineOptions: {
                 stroke: 'black',
@@ -120,6 +120,8 @@ $(function () {
             this.svg = null;
             this.indicatorLineGroup = null;
 
+            this.element.addClass('jh-time-picker');
+
             // Drawing (SVG)
             this._initSVGSizeVariables();
 
@@ -132,7 +134,11 @@ $(function () {
             }
 
             // Init SVG elements
-            this.element.svgContainer = $('<div></div>').addClass('jh-svg-container').width(this.svgWidthHeight).height(this.svgWidthHeight).attr('oncontextmenu', "return false;").appendTo(this.element);
+            this.element.svgContainer = $('<div></div>').addClass('jh-svg-container')
+                .width(this.availableSVGWidth)
+                .height(this.availableSVGHeight)
+                .attr('oncontextmenu', "return false;")
+                .appendTo(this.element);
             //this.element.svgContainer = $('<div></div>').addClass('jh-svg-container').width('100%').height('100%').attr('oncontextmenu', "return false;").appendTo(this.element);
             this._createSVGElements();
 
@@ -739,7 +745,10 @@ $(function () {
                 }
             }
 
+
+
             this.buttonContainerHeight = buttonContainer.outerHeight();
+            console.log(this.buttonContainerHeight);
         },
 
         /**
@@ -749,10 +758,12 @@ $(function () {
         _createSVGElements: function () {
             var _this = this;
 
+            var minWidthHeight = Math.min(this.availableSVGWidth, this.availableSVGHeight);
+
             this.svg = document.createElementNS(SVG_NS, 'svg');
             this.svg.setAttribute('version', '1.1');
-            this.svg.setAttribute('width', '100%');
-            this.svg.setAttribute('height', '100%');
+            this.svg.setAttribute('width', ''+minWidthHeight);
+            this.svg.setAttribute('height', ''+minWidthHeight);
             this.svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
             this.svg.setAttribute('viewBox', '0 0 ' + _this.svgWidthHeight + ' ' + _this.svgWidthHeight);
             this.element.svgContainer.append(this.svg);
@@ -926,7 +937,9 @@ $(function () {
         refresh: function () {
             this._clearSVGElements();
             this._initSVGSizeVariables();
-            this.element.svgContainer.width(this.svgWidthHeight).height(this.svgWidthHeight);
+            this.element.svgContainer
+                .width(this.availableSVGWidth)
+                .height(this.availableSVGHeight);
             this._createSVGElements();
             this._redrawSvgArcs();
         },

@@ -1,3 +1,6 @@
+.jh-time-picker {
+    overflow: hidden;
+}
 .jh-svg-container {
     margin: auto;
     cursor: crosshair;
@@ -5,9 +8,6 @@
 .jh-tooltip-container {
     position: absolute;
     background-color: white;
-}
-.jh-button-container {
-    overflow: auto;
 }
 .jh-toggle-button-container {
     float: right;
@@ -17,4 +17,10 @@
 }
 .hour-label {
     font-size: 16px;
+}
+/* See: http://stackoverflow.com/questions/12540436/height-of-parent-div-is-zero-even-if-it-has-child-with-finite-heights */
+.jh-button-container:after {
+    content: " ";
+    display: block;
+    clear: both;
 }
